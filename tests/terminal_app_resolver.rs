@@ -56,7 +56,7 @@ fn write_terminal_plist(home: &Path, profile: &str, font: &str) {
 }
 
 #[test]
-fn plist_with_nerd_font_detects_true_from_terminal_config() {
+fn terminal_app_resolver_plist_with_nerd_font_detects_true_from_terminal_config() {
     let home = make_home_path("terminal-app-nf");
     write_terminal_plist(&home, "Basic", "JetBrainsMono Nerd Font");
 
@@ -75,7 +75,7 @@ fn plist_with_nerd_font_detects_true_from_terminal_config() {
 }
 
 #[test]
-fn plist_with_non_nerd_font_detects_false_from_terminal_config() {
+fn terminal_app_resolver_plist_with_non_nerd_font_detects_false_from_terminal_config() {
     let home = make_home_path("terminal-app-non-nf");
     write_terminal_plist(&home, "Basic", "Menlo");
 
@@ -94,7 +94,7 @@ fn plist_with_non_nerd_font_detects_false_from_terminal_config() {
 }
 
 #[test]
-fn missing_plist_returns_config_error() {
+fn terminal_app_resolver_missing_plist_returns_config_error() {
     let home = make_home_path("terminal-app-missing");
     fs::create_dir_all(home.join("Library/Preferences"))
         .expect("failed to create terminal preferences directory");
@@ -112,7 +112,7 @@ fn missing_plist_returns_config_error() {
 }
 
 #[test]
-fn malformed_plist_returns_config_error() {
+fn terminal_app_resolver_malformed_plist_returns_config_error() {
     let home = make_home_path("terminal-app-malformed");
     let plist_path = terminal_plist_path(&home);
     fs::create_dir_all(
@@ -136,7 +136,7 @@ fn malformed_plist_returns_config_error() {
 }
 
 #[test]
-fn missing_home_returns_config_error() {
+fn terminal_app_resolver_missing_home_returns_config_error() {
     let env = vars(&[("TERM_PROGRAM", "Apple_Terminal")]);
 
     let result = detect(&env, Path::new("."));
