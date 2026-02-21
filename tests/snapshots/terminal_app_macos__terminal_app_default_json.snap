@@ -1,0 +1,13 @@
+---
+source: tests/terminal_app_macos.rs
+expression: "support::stdout_json_snapshot(&output)"
+---
+{
+  "confidence": "certain",
+  "config_path": "<SCENARIO_HOME>/terminal-app-real-default/Library/Preferences/com.apple.Terminal.plist",
+  "detected": false,
+  "font": "SFMonoTerminal-Regular",
+  "profile": "Clear Dark",
+  "source": "terminal_config",
+  "terminal": "terminal_app"
+}

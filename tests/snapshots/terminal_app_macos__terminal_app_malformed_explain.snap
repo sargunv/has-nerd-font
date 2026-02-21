@@ -1,0 +1,5 @@
+---
+source: tests/terminal_app_macos.rs
+expression: "support::stderr_text(&output)"
+---
+failed to read terminal configuration: failed to read plist: ExpectedEndOfEventStream { found: String }

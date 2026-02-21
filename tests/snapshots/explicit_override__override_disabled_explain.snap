@@ -1,0 +1,5 @@
+---
+source: tests/explicit_override.rs
+expression: "support::stderr_text(&output)"
+---
+Nerd Font explicitly disabled by NERD_FONT override

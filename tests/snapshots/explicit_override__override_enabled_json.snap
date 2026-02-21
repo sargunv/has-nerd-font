@@ -1,0 +1,13 @@
+---
+source: tests/explicit_override.rs
+expression: "support::stdout_json_snapshot(&output)"
+---
+{
+  "confidence": "certain",
+  "config_path": null,
+  "detected": true,
+  "font": null,
+  "profile": null,
+  "source": "env_var",
+  "terminal": null
+}
