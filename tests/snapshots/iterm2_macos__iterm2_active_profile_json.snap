@@ -1,0 +1,13 @@
+---
+source: tests/iterm2_macos.rs
+expression: "support::stdout_json_snapshot(&output)"
+---
+{
+  "confidence": "certain",
+  "config_path": "<SCENARIO_HOME>/iterm2-active-profile/Library/Preferences/com.googlecode.iterm2.plist",
+  "detected": true,
+  "font": "JetBrainsMonoNFM-Regular 12",
+  "profile": "NerdProfile",
+  "source": "terminal_config",
+  "terminal": "i_term2"
+}
