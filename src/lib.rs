@@ -12,6 +12,7 @@ pub fn detect(_vars: &[(String, String)], _cwd: &Path) -> DetectionResult {
         font: None,
         config_path: None,
         profile: None,
+        error_reason: None,
         confidence: Confidence::Certain,
     }
 }

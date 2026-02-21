@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct DetectionResult {
@@ -10,22 +11,26 @@ pub struct DetectionResult {
     pub font: Option<String>,
     pub config_path: Option<PathBuf>,
     pub profile: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub error_reason: Option<String>,
     pub confidence: Confidence,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum DetectionSource {
     EnvVar,
     ExplicitDisable,
     UnknownTerminal,
     RemoteSession,
     NoResolver,
-    ConfigError { reason: String },
+    ConfigError,
     BundledTerminal,
     TerminalConfig,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum Terminal {
     Ghostty,
     WezTerm,
@@ -40,6 +45,7 @@ pub enum Terminal {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum Confidence {
     Certain,
     Probable,
@@ -54,11 +60,19 @@ impl DetectionResult {
             (DetectionSource::UnknownTerminal, _) => 2,
             (DetectionSource::RemoteSession, _) => 3,
             (DetectionSource::NoResolver, _) => 4,
-            (DetectionSource::ConfigError { .. }, _) => 5,
+            (DetectionSource::ConfigError, _) => 5,
             (DetectionSource::TerminalConfig, Some(true)) => 0,
             (DetectionSource::TerminalConfig, Some(false)) => 6,
             (DetectionSource::TerminalConfig, None) => 5,
         }
+    }
+
+    pub fn to_json_value(&self) -> Value {
+        let mut value = serde_json::to_value(self).expect("failed to serialize detection result");
+        if let Value::Object(ref mut object) = value {
+            object.insert("exit_code".to_string(), Value::from(self.exit_code()));
+        }
+        value
     }
 
     pub fn explain(&self) -> String {
@@ -76,9 +90,10 @@ impl DetectionResult {
             DetectionSource::NoResolver => {
                 "known terminal has no resolver implemented yet".to_string()
             }
-            DetectionSource::ConfigError { reason } => {
-                format!("failed to read terminal configuration: {reason}")
-            }
+            DetectionSource::ConfigError => format!(
+                "failed to read terminal configuration: {}",
+                self.error_reason.as_deref().unwrap_or("unknown reason")
+            ),
             DetectionSource::BundledTerminal => {
                 "terminal ships with Nerd Font support by default".to_string()
             }

@@ -8,6 +8,7 @@ fn sample_result(source: DetectionSource, detected: Option<bool>) -> DetectionRe
         font: Some("MesloLGS Nerd Font".to_string()),
         config_path: None,
         profile: Some("Default".to_string()),
+        error_reason: None,
         confidence: Confidence::Certain,
     }
 }
@@ -27,15 +28,7 @@ fn detection_result_contract_exit_code_maps_from_source_and_detected() {
         (sample_result(DetectionSource::UnknownTerminal, None), 2),
         (sample_result(DetectionSource::RemoteSession, None), 3),
         (sample_result(DetectionSource::NoResolver, None), 4),
-        (
-            sample_result(
-                DetectionSource::ConfigError {
-                    reason: "missing plist".to_string(),
-                },
-                None,
-            ),
-            5,
-        ),
+        (sample_result(DetectionSource::ConfigError, None), 5),
         (
             sample_result(DetectionSource::TerminalConfig, Some(true)),
             0,
@@ -44,6 +37,7 @@ fn detection_result_contract_exit_code_maps_from_source_and_detected() {
             sample_result(DetectionSource::TerminalConfig, Some(false)),
             6,
         ),
+        (sample_result(DetectionSource::TerminalConfig, None), 5),
     ];
 
     for (result, expected) in cases {
@@ -54,22 +48,39 @@ fn detection_result_contract_exit_code_maps_from_source_and_detected() {
 #[test]
 fn detection_result_contract_result_serializes_key_fields_for_json_output() {
     let result = sample_result(DetectionSource::TerminalConfig, Some(false));
-    let json = serde_json::to_value(&result).expect("result should serialize");
+    let json = result.to_json_value();
 
     assert_eq!(json["detected"], serde_json::Value::Bool(false));
     assert_eq!(
         json["source"],
-        serde_json::Value::String("TerminalConfig".to_string())
+        serde_json::Value::String("terminal_config".to_string())
     );
     assert_eq!(
         json["terminal"],
-        serde_json::Value::String("TerminalApp".to_string())
+        serde_json::Value::String("terminal_app".to_string())
     );
     assert_eq!(
         json["confidence"],
-        serde_json::Value::String("Certain".to_string())
+        serde_json::Value::String("certain".to_string())
     );
-    assert_eq!(result.exit_code(), 6);
+    assert_eq!(json["exit_code"], serde_json::Value::Number(6.into()));
+}
+
+#[test]
+fn detection_result_contract_config_error_json_keeps_source_string_and_reason_field() {
+    let mut result = sample_result(DetectionSource::ConfigError, None);
+    result.error_reason = Some("missing plist".to_string());
+
+    let json = result.to_json_value();
+
+    assert_eq!(
+        json["source"],
+        serde_json::Value::String("config_error".to_string())
+    );
+    assert_eq!(
+        json["error_reason"],
+        serde_json::Value::String("missing plist".to_string())
+    );
 }
 
 #[test]
