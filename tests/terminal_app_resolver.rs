@@ -132,6 +132,46 @@ fn terminal_app_resolver_plist_with_non_nerd_font_detects_false_from_terminal_co
 }
 
 #[test]
+fn terminal_app_resolver_plist_with_nfm_alias_detects_true_from_terminal_config() {
+    let home = make_home_path("terminal-app-nfm");
+    write_terminal_plist(&home, "Basic", "JetBrainsMono NFM");
+
+    let home_str = home.to_string_lossy().to_string();
+    let env = vars(&[("TERM_PROGRAM", "Apple_Terminal"), ("HOME", &home_str)]);
+
+    let result = detect(&env, Path::new("."));
+
+    assert_platform_font_result(
+        &result,
+        true,
+        0,
+        "Basic",
+        "JetBrainsMono NFM",
+        terminal_plist_path(&home),
+    );
+}
+
+#[test]
+fn terminal_app_resolver_plist_with_nfp_alias_detects_true_from_terminal_config() {
+    let home = make_home_path("terminal-app-nfp");
+    write_terminal_plist(&home, "Basic", "JetBrainsMono NFP");
+
+    let home_str = home.to_string_lossy().to_string();
+    let env = vars(&[("TERM_PROGRAM", "Apple_Terminal"), ("HOME", &home_str)]);
+
+    let result = detect(&env, Path::new("."));
+
+    assert_platform_font_result(
+        &result,
+        true,
+        0,
+        "Basic",
+        "JetBrainsMono NFP",
+        terminal_plist_path(&home),
+    );
+}
+
+#[test]
 fn terminal_app_resolver_missing_plist_returns_config_error() {
     let home = make_home_path("terminal-app-missing");
     fs::create_dir_all(home.join("Library/Preferences"))

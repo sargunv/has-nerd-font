@@ -65,6 +65,21 @@ fn unknown_signals_returns_unknown_terminal() {
 }
 
 #[test]
+fn unmapped_term_program_routes_to_no_resolver_with_unknown_terminal_variant() {
+    let env = vars(&[("TERM_PROGRAM", "CoolNewTerm")]);
+
+    let result = detect(&env, Path::new("."));
+
+    assert_eq!(result.source, DetectionSource::NoResolver);
+    assert_eq!(result.detected, None);
+    assert_eq!(result.exit_code(), 4);
+    assert_eq!(
+        result.terminal,
+        Some(Terminal::Unknown("CoolNewTerm".to_string()))
+    );
+}
+
+#[test]
 fn apple_terminal_identifies_and_continues_to_no_resolver() {
     let env = vars(&[("TERM_PROGRAM", "Apple_Terminal")]);
 

@@ -105,6 +105,18 @@ fn json_and_explain_split_stdout_and_stderr() {
 }
 
 #[test]
+fn unmapped_term_program_in_json_mode_returns_no_resolver_exit_code() {
+    let output = run_cli(&["--json"], &[("TERM_PROGRAM", "CoolNewTerm")]);
+
+    assert_eq!(output.status.code(), Some(4));
+    assert!(output.stderr.is_empty());
+
+    let json = parse_stdout_json(&output);
+    assert_eq!(json["exit_code"].as_i64(), Some(4));
+    assert_eq!(json["source"].as_str(), Some("no_resolver"));
+}
+
+#[test]
 fn terminal_app_vertical_path_uses_home_plist_fixture() {
     let home = TempDir::new().expect("temp HOME should be created");
 

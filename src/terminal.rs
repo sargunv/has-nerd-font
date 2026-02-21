@@ -7,10 +7,16 @@ pub enum TerminalDecision {
 }
 
 pub fn detect(vars: &[(String, String)]) -> TerminalDecision {
-    if let Some(value) = env_value(vars, "TERM_PROGRAM")
-        && let Some(terminal) = from_term_program(value)
-    {
-        return decide(terminal);
+    if let Some(value) = env_value(vars, "TERM_PROGRAM") {
+        let raw = value.trim();
+
+        if let Some(terminal) = from_term_program(raw) {
+            return decide(terminal);
+        }
+
+        if !raw.is_empty() {
+            return TerminalDecision::Identified(Terminal::Unknown(raw.to_string()));
+        }
     }
 
     if let Some(value) = env_value(vars, "TERM")

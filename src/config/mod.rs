@@ -14,9 +14,7 @@ pub fn resolve(terminal: Terminal, vars: &[(String, String)], _cwd: &Path) -> De
         | Terminal::Zed
         | Terminal::Hyper => no_resolver(terminal),
         Terminal::Ghostty | Terminal::WezTerm => no_resolver(terminal),
-        Terminal::Unknown(name) => {
-            config_error(format!("no resolver for unknown terminal: {name}"))
-        }
+        Terminal::Unknown(_) => no_resolver(terminal),
     }
 }
 
@@ -29,19 +27,6 @@ fn no_resolver(terminal: Terminal) -> DetectionResult {
         config_path: None,
         profile: None,
         error_reason: None,
-        confidence: Confidence::Certain,
-    }
-}
-
-fn config_error(reason: String) -> DetectionResult {
-    DetectionResult {
-        detected: None,
-        source: DetectionSource::ConfigError,
-        terminal: None,
-        font: None,
-        config_path: None,
-        profile: None,
-        error_reason: Some(reason),
         confidence: Confidence::Certain,
     }
 }

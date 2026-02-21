@@ -136,7 +136,7 @@ fn is_nerd_font(font: &str) -> bool {
 
     normalized
         .split(|ch: char| !ch.is_ascii_alphanumeric())
-        .any(|token| token == "nf")
+        .any(|token| matches!(token, "nf" | "nfm" | "nfp"))
 }
 
 fn config_error(
