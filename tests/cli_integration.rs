@@ -1,10 +1,13 @@
-use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Output};
 
-use plist::{Dictionary, Value};
 use serde_json::Value as JsonValue;
 use tempfile::TempDir;
+
+#[cfg(target_os = "macos")]
+use plist::{Dictionary, Value};
+#[cfg(target_os = "macos")]
+use std::fs;
 
 fn run_cli(args: &[&str], env: &[(&str, &str)]) -> Output {
     let mut command = Command::new(assert_cmd::cargo::cargo_bin!("has-nerd-font"));
@@ -26,6 +29,7 @@ fn terminal_plist_path(home: &Path) -> PathBuf {
     home.join("Library/Preferences/com.apple.Terminal.plist")
 }
 
+#[cfg(target_os = "macos")]
 fn write_terminal_plist(home: &Path, profile: &str, font: &str) {
     let plist_path = terminal_plist_path(home);
     fs::create_dir_all(
@@ -103,6 +107,8 @@ fn json_and_explain_split_stdout_and_stderr() {
 #[test]
 fn terminal_app_vertical_path_uses_home_plist_fixture() {
     let home = TempDir::new().expect("temp HOME should be created");
+
+    #[cfg(target_os = "macos")]
     write_terminal_plist(home.path(), "Basic", "JetBrainsMono Nerd Font");
 
     let home_value = home.path().to_string_lossy().to_string();
