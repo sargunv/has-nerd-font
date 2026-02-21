@@ -23,6 +23,10 @@ pub fn detect(vars: &[(String, String)]) -> TerminalDecision {
         return TerminalDecision::Bundled(Terminal::WezTerm);
     }
 
+    if has_nonempty(vars, "KITTY_PID") {
+        return TerminalDecision::Identified(Terminal::Kitty);
+    }
+
     TerminalDecision::Unknown
 }
 

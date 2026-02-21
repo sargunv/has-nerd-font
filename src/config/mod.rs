@@ -19,7 +19,16 @@ pub fn resolve(terminal: Terminal, cwd: &Path) -> DetectionResult {
 }
 
 fn resolve_terminal_app(_cwd: &Path) -> DetectionResult {
-    no_resolver(Terminal::TerminalApp)
+    DetectionResult {
+        detected: None,
+        source: DetectionSource::ConfigError,
+        terminal: Some(Terminal::TerminalApp),
+        font: None,
+        config_path: None,
+        profile: None,
+        error_reason: Some("terminal_app resolver not implemented yet".to_string()),
+        confidence: Confidence::Certain,
+    }
 }
 
 fn no_resolver(terminal: Terminal) -> DetectionResult {

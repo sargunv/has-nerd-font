@@ -59,7 +59,7 @@ fn unrecognized_nerd_font_value_continues_to_later_layers() {
 
     let result = detect(&env, Path::new("."));
 
-    assert_eq!(result.source, DetectionSource::NoResolver);
+    assert_eq!(result.source, DetectionSource::ConfigError);
     assert_eq!(result.detected, None);
 }
 

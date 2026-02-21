@@ -70,8 +70,9 @@ fn apple_terminal_identifies_and_continues_to_no_resolver() {
 
     let result = detect(&env, Path::new("."));
 
-    assert_eq!(result.source, DetectionSource::NoResolver);
+    assert_eq!(result.source, DetectionSource::ConfigError);
     assert_eq!(result.detected, None);
+    assert_eq!(result.exit_code(), 5);
     assert_eq!(result.terminal, Some(Terminal::TerminalApp));
 }
 
@@ -84,7 +85,8 @@ fn term_program_takes_precedence_over_term() {
 
     let result = detect(&env, Path::new("."));
 
-    assert_eq!(result.source, DetectionSource::NoResolver);
+    assert_eq!(result.source, DetectionSource::ConfigError);
     assert_eq!(result.detected, None);
+    assert_eq!(result.exit_code(), 5);
     assert_eq!(result.terminal, Some(Terminal::TerminalApp));
 }
