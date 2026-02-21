@@ -1,7 +1,8 @@
 use std::path::PathBuf;
 
+use crate::{Confidence, DetectionResult, DetectionSource, Terminal};
+#[cfg(target_os = "macos")]
 use crate::{
-    Confidence, DetectionResult, DetectionSource, Terminal,
     font::is_nerd_font,
     plist::{font_name_from_keyed_archive, load_root_dictionary},
 };

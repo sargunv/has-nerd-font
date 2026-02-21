@@ -3,6 +3,7 @@ use std::path::Path;
 mod config;
 mod env;
 mod font;
+#[cfg(target_os = "macos")]
 mod plist;
 mod terminal;
 mod types;
