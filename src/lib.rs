@@ -7,6 +7,10 @@ mod types;
 
 pub use types::{Confidence, DetectionResult, DetectionSource, Terminal};
 
+pub fn resolve_config(terminal: Terminal, cwd: &Path) -> DetectionResult {
+    config::resolve(terminal, cwd)
+}
+
 enum LayerOutcome<T> {
     Final(DetectionResult),
     Continue(T),
