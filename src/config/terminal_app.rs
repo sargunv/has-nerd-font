@@ -2,23 +2,19 @@ use std::path::PathBuf;
 
 use crate::{Confidence, DetectionResult, DetectionSource, Terminal};
 
-const HOME_KEY: &str = "HOME";
-const DEFAULT_WINDOW_SETTINGS_KEY: &str = "Default Window Settings";
-const WINDOW_SETTINGS_KEY: &str = "Window Settings";
-
 pub fn resolve(vars: &[(String, String)]) -> DetectionResult {
-    let home = match var(vars, HOME_KEY) {
+    let home = match var(vars, "HOME") {
         Some(value) if !value.is_empty() => value,
         _ => return config_error("HOME is not set".to_string(), None, None),
     };
 
     let config_path = PathBuf::from(home).join("Library/Preferences/com.apple.Terminal.plist");
 
-    resolve_from_plist(vars, config_path)
+    resolve_from_plist(config_path)
 }
 
 #[cfg(target_os = "macos")]
-fn resolve_from_plist(_vars: &[(String, String)], config_path: PathBuf) -> DetectionResult {
+fn resolve_from_plist(config_path: PathBuf) -> DetectionResult {
     let value = match plist::Value::from_file(&config_path) {
         Ok(value) => value,
         Err(err) => {
@@ -42,7 +38,7 @@ fn resolve_from_plist(_vars: &[(String, String)], config_path: PathBuf) -> Detec
     };
 
     let profile = match root
-        .get(DEFAULT_WINDOW_SETTINGS_KEY)
+        .get("Default Window Settings")
         .and_then(plist::Value::as_string)
     {
         Some(profile) if !profile.is_empty() => profile.to_string(),
@@ -73,7 +69,7 @@ fn resolve_from_plist(_vars: &[(String, String)], config_path: PathBuf) -> Detec
 }
 
 #[cfg(not(target_os = "macos"))]
-fn resolve_from_plist(_vars: &[(String, String)], config_path: PathBuf) -> DetectionResult {
+fn resolve_from_plist(config_path: PathBuf) -> DetectionResult {
     config_error(
         "Terminal.app resolver is only supported on macOS".to_string(),
         None,
@@ -84,7 +80,7 @@ fn resolve_from_plist(_vars: &[(String, String)], config_path: PathBuf) -> Detec
 #[cfg(target_os = "macos")]
 fn resolve_font(root: &plist::Dictionary, profile: &str) -> Result<String, String> {
     let settings = root
-        .get(WINDOW_SETTINGS_KEY)
+        .get("Window Settings")
         .and_then(plist::Value::as_dictionary)
         .ok_or_else(|| "missing Window Settings dictionary".to_string())?;
 
