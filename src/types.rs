@@ -1,7 +1,6 @@
 use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct DetectionResult {
@@ -73,20 +72,6 @@ impl DetectionResult {
         }
     }
 
-    pub fn to_json_value(&self) -> Value {
-        let mut value = serde_json::to_value(self).expect("failed to serialize detection result");
-        if let Value::Object(ref mut object) = value {
-            let terminal_json = self
-                .terminal
-                .as_ref()
-                .map(Terminal::to_json_contract_value)
-                .unwrap_or(Value::Null);
-            object.insert("terminal".to_string(), terminal_json);
-            object.insert("exit_code".to_string(), Value::from(self.exit_code()));
-        }
-        value
-    }
-
     pub fn explain(&self) -> String {
         match &self.source {
             DetectionSource::EnvVar => "detected Nerd Font from NERD_FONT override".to_string(),
@@ -118,15 +103,6 @@ impl DetectionResult {
                     "terminal configuration status is unknown".to_string()
                 }
             }
-        }
-    }
-}
-
-impl Terminal {
-    fn to_json_contract_value(&self) -> Value {
-        match self {
-            Self::Unknown(raw) => Value::String(raw.clone()),
-            _ => serde_json::to_value(self).expect("failed to serialize terminal"),
         }
     }
 }

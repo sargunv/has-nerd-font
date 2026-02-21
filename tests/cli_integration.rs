@@ -70,14 +70,14 @@ fn no_flags_emits_no_output_and_uses_result_exit_code() {
 }
 
 #[test]
-fn json_flag_emits_valid_json_with_exit_code() {
+fn json_flag_emits_valid_json() {
     let output = run_cli(&["--json"], &[("TERM_PROGRAM", "ghostty")]);
 
     assert_eq!(output.status.code(), Some(0));
     assert!(output.stderr.is_empty());
 
     let json = parse_stdout_json(&output);
-    assert_eq!(json["exit_code"].as_i64(), Some(0));
+    assert_eq!(json["source"].as_str(), Some("bundled_terminal"));
 }
 
 #[test]
@@ -98,7 +98,7 @@ fn json_and_explain_split_stdout_and_stderr() {
     assert_eq!(output.status.code(), Some(0));
 
     let json = parse_stdout_json(&output);
-    assert_eq!(json["exit_code"].as_i64(), Some(0));
+    assert_eq!(json["source"].as_str(), Some("bundled_terminal"));
 
     let stderr = String::from_utf8(output.stderr).expect("stderr should be utf-8");
     assert!(stderr.contains("ships with Nerd Font support"));
@@ -112,9 +112,11 @@ fn unmapped_term_program_in_json_mode_returns_no_resolver_exit_code() {
     assert!(output.stderr.is_empty());
 
     let json = parse_stdout_json(&output);
-    assert_eq!(json["exit_code"].as_i64(), Some(4));
     assert_eq!(json["source"].as_str(), Some("no_resolver"));
-    assert_eq!(json["terminal"].as_str(), Some("CoolNewTerm"));
+    assert_eq!(
+        json["terminal"],
+        serde_json::json!({"unknown": "CoolNewTerm"})
+    );
 }
 
 #[test]
@@ -134,7 +136,6 @@ fn terminal_app_vertical_path_uses_home_plist_fixture() {
     {
         assert_eq!(output.status.code(), Some(0));
         let json = parse_stdout_json(&output);
-        assert_eq!(json["exit_code"].as_i64(), Some(0));
         assert_eq!(json["source"].as_str(), Some("terminal_config"));
         assert_eq!(json["detected"].as_bool(), Some(true));
 
@@ -146,7 +147,6 @@ fn terminal_app_vertical_path_uses_home_plist_fixture() {
     {
         assert_eq!(output.status.code(), Some(5));
         let json = parse_stdout_json(&output);
-        assert_eq!(json["exit_code"].as_i64(), Some(5));
         assert_eq!(json["source"].as_str(), Some("config_error"));
 
         let stderr = String::from_utf8(output.stderr).expect("stderr should be utf-8");

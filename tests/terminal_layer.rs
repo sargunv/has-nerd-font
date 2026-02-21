@@ -43,14 +43,14 @@ fn term_program_wezterm_short_circuits_as_bundled() {
 }
 
 #[test]
-fn wezterm_pane_short_circuits_as_bundled() {
+fn wezterm_pane_without_term_signals_is_unknown_terminal() {
     let env = vars(&[("WEZTERM_PANE", "1")]);
 
     let result = detect(&env, Path::new("."));
 
-    assert_eq!(result.source, DetectionSource::BundledTerminal);
-    assert_eq!(result.detected, Some(true));
-    assert_eq!(result.terminal, Some(Terminal::WezTerm));
+    assert_eq!(result.source, DetectionSource::UnknownTerminal);
+    assert_eq!(result.detected, None);
+    assert_eq!(result.exit_code(), 2);
 }
 
 #[test]

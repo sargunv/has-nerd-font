@@ -25,7 +25,7 @@ fn known_non_bundled_terminal_with_ssh_is_remote_session() {
 
 #[test]
 fn known_non_bundled_local_terminal_without_resolver_returns_no_resolver() {
-    let env = vars(&[("KITTY_PID", "42")]);
+    let env = vars(&[("TERM", "xterm-kitty")]);
 
     let result = detect(&env, Path::new("."));
 

@@ -18,8 +18,7 @@ fn main() {
     if cli.json {
         println!(
             "{}",
-            serde_json::to_string(&result.to_json_value())
-                .expect("failed to serialize result as json")
+            serde_json::to_string(&result).expect("failed to serialize result as json")
         );
     }
 
