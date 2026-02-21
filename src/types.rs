@@ -44,6 +44,12 @@ pub enum Terminal {
     Unknown(String),
 }
 
+impl Terminal {
+    pub fn is_bundled(&self) -> bool {
+        matches!(self, Self::Ghostty | Self::WezTerm)
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Confidence {
