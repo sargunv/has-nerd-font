@@ -120,6 +120,43 @@ pub fn install_iterm2_fixture(home: &Path, fixture_name: &str) {
     std::fs::copy(&fixture_path, &plist_path).expect("failed to copy iTerm2 plist fixture");
 }
 
+pub fn install_vscode_fixture(home: &Path, fixture_name: &str, app_dir: &str) {
+    let fixture_path = Path::new("tests")
+        .join("fixtures")
+        .join("vscode")
+        .join(fixture_name);
+    let settings_path = if cfg!(target_os = "macos") {
+        home.join(format!(
+            "Library/Application Support/{app_dir}/User/settings.json"
+        ))
+    } else {
+        home.join(format!(".config/{app_dir}/User/settings.json"))
+    };
+    std::fs::create_dir_all(
+        settings_path
+            .parent()
+            .expect("vscode settings should have parent directory"),
+    )
+    .expect("failed to create vscode settings directory");
+    std::fs::copy(&fixture_path, &settings_path).expect("failed to copy vscode settings fixture");
+}
+
+pub fn install_vscode_project_fixture(cwd: &Path, fixture_name: &str) {
+    let fixture_path = Path::new("tests")
+        .join("fixtures")
+        .join("vscode")
+        .join(fixture_name);
+    let settings_path = cwd.join(".vscode/settings.json");
+    std::fs::create_dir_all(
+        settings_path
+            .parent()
+            .expect("vscode project settings should have parent directory"),
+    )
+    .expect("failed to create vscode project settings directory");
+    std::fs::copy(&fixture_path, &settings_path)
+        .expect("failed to copy vscode project settings fixture");
+}
+
 pub fn install_zed_fixture(home: &Path, fixture_name: &str) {
     let fixture_path = Path::new("tests")
         .join("fixtures")

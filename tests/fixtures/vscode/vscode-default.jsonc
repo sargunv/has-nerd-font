@@ -1,0 +1,5 @@
+// VS Code settings with default (non-Nerd) font
+{
+  "editor.fontFamily": "'Monaco', 'Menlo', monospace",
+  "editor.fontSize": 14
+}

@@ -1,0 +1,14 @@
+---
+source: tests/vscode.rs
+expression: "support::stdout_json_snapshot(&output)"
+---
+{
+  "confidence": "certain",
+  "config_path": "<SCENARIO_HOME>/vscode-malformed/Library/Application Support/Code/User/settings.json",
+  "detected": null,
+  "error_reason": "failed to parse <SCENARIO_HOME>/vscode-malformed/Library/Application Support/Code/User/settings.json at line 1 column 1",
+  "font": null,
+  "profile": null,
+  "source": "config_error",
+  "terminal": "vscode"
+}

@@ -1,0 +1,5 @@
+// VS Code settings with a Nerd Font as editor font
+{
+  "editor.fontFamily": "'JetBrainsMono Nerd Font', monospace",
+  "editor.fontSize": 14
+}

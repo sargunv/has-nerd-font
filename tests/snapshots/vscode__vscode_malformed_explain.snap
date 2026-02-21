@@ -1,0 +1,5 @@
+---
+source: tests/vscode.rs
+expression: "support::stderr_text_normalized(&output, &[])"
+---
+failed to read terminal configuration: failed to parse <SCENARIO_HOME>/vscode-malformed/Library/Application Support/Code/User/settings.json at line 1 column 1

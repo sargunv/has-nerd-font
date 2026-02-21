@@ -1,5 +1,6 @@
 use std::path::PathBuf;
 
+use super::var;
 use crate::{Confidence, DetectionResult, DetectionSource, Terminal};
 #[cfg(target_os = "macos")]
 use crate::{
@@ -89,11 +90,6 @@ fn resolve_font(root: &plist::Dictionary, profile: &str) -> Result<String, Strin
     }
 
     Ok(font)
-}
-
-fn var<'a>(vars: &'a [(String, String)], key: &str) -> Option<&'a str> {
-    vars.iter()
-        .find_map(|(k, v)| (k == key).then_some(v.as_str()))
 }
 
 fn config_error(

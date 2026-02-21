@@ -1,0 +1,13 @@
+---
+source: tests/vscode.rs
+expression: "support::stdout_json_snapshot(&output)"
+---
+{
+  "confidence": "certain",
+  "config_path": "<SCENARIO_HOME>/vscode-default/Library/Application Support/Code/User/settings.json",
+  "detected": false,
+  "font": "'Monaco', 'Menlo', monospace",
+  "profile": null,
+  "source": "terminal_config",
+  "terminal": "vscode"
+}

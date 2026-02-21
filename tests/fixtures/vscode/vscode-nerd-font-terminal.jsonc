@@ -1,0 +1,6 @@
+// VS Code settings with a Nerd Font as terminal font
+{
+  "editor.fontFamily": "'Monaco', 'Menlo', monospace",
+  "terminal.integrated.fontFamily": "'JetBrainsMono Nerd Font', monospace",
+  "terminal.integrated.fontSize": 14
+}

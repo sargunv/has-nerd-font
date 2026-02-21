@@ -57,6 +57,7 @@ fn from_term_program(value: &str) -> Option<Terminal> {
         "wezterm" => Some(Terminal::WezTerm),
         "iterm.app" => Some(Terminal::ITerm2),
         "apple_terminal" => Some(Terminal::TerminalApp),
+        "vscode" => Some(Terminal::Vscode),
         "zed" => Some(Terminal::Zed),
         "hyper" => Some(Terminal::Hyper),
         _ => None,
