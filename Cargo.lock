@@ -224,7 +224,7 @@ dependencies = [
 
 [[package]]
 name = "has-nerd-font"
-version = "0.1.0"
+version = "0.0.0-dev"
 dependencies = [
  "assert_cmd",
  "clap",
