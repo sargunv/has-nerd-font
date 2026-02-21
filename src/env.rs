@@ -1,21 +1,21 @@
-use crate::{Confidence, DetectionResult, DetectionSource};
+pub enum EnvDecision {
+    OverrideEnabled,
+    OverrideDisabled,
+    Continue,
+}
 
-pub fn detect(vars: &[(String, String)]) -> Option<DetectionResult> {
-    if vars
+pub fn detect(vars: &[(String, String)]) -> EnvDecision {
+    let Some(raw) = vars
         .iter()
-        .any(|(key, value)| key == "NERD_FONT" && value.trim() == "1")
-    {
-        return Some(DetectionResult {
-            detected: Some(true),
-            source: DetectionSource::EnvVar,
-            terminal: None,
-            font: None,
-            config_path: None,
-            profile: None,
-            error_reason: None,
-            confidence: Confidence::Certain,
-        });
-    }
+        .find_map(|(key, value)| (key == "NERD_FONT").then_some(value))
+    else {
+        return EnvDecision::Continue;
+    };
 
-    None
+    let normalized = raw.trim().to_ascii_lowercase();
+    match normalized.as_str() {
+        "1" | "true" | "yes" => EnvDecision::OverrideEnabled,
+        "0" | "false" | "no" => EnvDecision::OverrideDisabled,
+        _ => EnvDecision::Continue,
+    }
 }

@@ -24,6 +24,26 @@ fn env_override_finalizes_before_later_layers() {
 }
 
 #[test]
+fn env_override_truthy_tokens_are_trimmed_and_case_insensitive() {
+    let env = vars(&[("NERD_FONT", "  YeS  "), ("TERM_PROGRAM", "Apple_Terminal")]);
+
+    let result = detect(&env, Path::new("."));
+
+    assert_eq!(result.source, DetectionSource::EnvVar);
+    assert_eq!(result.detected, Some(true));
+}
+
+#[test]
+fn env_override_falsy_tokens_short_circuit_before_terminal_layer() {
+    let env = vars(&[("NERD_FONT", " FALSE "), ("TERM_PROGRAM", "ghostty")]);
+
+    let result = detect(&env, Path::new("."));
+
+    assert_eq!(result.source, DetectionSource::ExplicitDisable);
+    assert_eq!(result.detected, Some(false));
+}
+
+#[test]
 fn bundled_terminal_finalizes_before_ssh_gate() {
     let env = vars(&[("TERM_PROGRAM", "ghostty"), ("SSH_TTY", "/dev/pts/1")]);
 

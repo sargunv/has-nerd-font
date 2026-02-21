@@ -1,34 +1,25 @@
-use crate::{Confidence, DetectionResult, DetectionSource, Terminal};
+use crate::Terminal;
 
-pub enum TerminalLayerSignal {
-    Bundled(DetectionResult),
+pub enum TerminalDecision {
+    Bundled(Terminal),
     Identified(Terminal),
     Unknown,
 }
 
-pub fn detect(vars: &[(String, String)]) -> TerminalLayerSignal {
+pub fn detect(vars: &[(String, String)]) -> TerminalDecision {
     if vars
         .iter()
         .any(|(key, value)| key == "TERM_PROGRAM" && value.eq_ignore_ascii_case("ghostty"))
     {
-        return TerminalLayerSignal::Bundled(DetectionResult {
-            detected: Some(true),
-            source: DetectionSource::BundledTerminal,
-            terminal: Some(Terminal::Ghostty),
-            font: None,
-            config_path: None,
-            profile: None,
-            error_reason: None,
-            confidence: Confidence::Certain,
-        });
+        return TerminalDecision::Bundled(Terminal::Ghostty);
     }
 
     if vars
         .iter()
         .any(|(key, value)| key == "TERM_PROGRAM" && value == "Apple_Terminal")
     {
-        return TerminalLayerSignal::Identified(Terminal::TerminalApp);
+        return TerminalDecision::Identified(Terminal::TerminalApp);
     }
 
-    TerminalLayerSignal::Unknown
+    TerminalDecision::Unknown
 }
