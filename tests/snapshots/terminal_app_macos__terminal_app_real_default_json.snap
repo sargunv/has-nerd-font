@@ -1,0 +1,14 @@
+---
+source: tests/terminal_app_macos.rs
+expression: "support::stdout_json_snapshot(&output)"
+---
+{
+  "confidence": "certain",
+  "config_path": "<SCENARIO_HOME>/terminal-app-real-default/Library/Preferences/com.apple.Terminal.plist",
+  "detected": null,
+  "error_reason": "missing font descriptor for profile Clear Dark",
+  "font": null,
+  "profile": "Clear Dark",
+  "source": "config_error",
+  "terminal": "terminal_app"
+}

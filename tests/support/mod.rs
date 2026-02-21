@@ -64,9 +64,11 @@ pub fn scenario_home(name: &str) -> PathBuf {
 }
 
 #[cfg(target_os = "macos")]
-pub fn write_terminal_app_plist(home: &Path, profile: &str, font: &str) {
-    use plist::{Dictionary, Value};
-
+pub fn install_terminal_app_fixture(home: &Path, fixture_name: &str) {
+    let fixture_path = Path::new("tests")
+        .join("fixtures")
+        .join("terminal_app")
+        .join(fixture_name);
     let plist_path = home.join("Library/Preferences/com.apple.Terminal.plist");
     std::fs::create_dir_all(
         plist_path
@@ -75,23 +77,5 @@ pub fn write_terminal_app_plist(home: &Path, profile: &str, font: &str) {
     )
     .expect("failed to create terminal plist directory");
 
-    let mut profile_settings = Dictionary::new();
-    profile_settings.insert("Font".to_string(), Value::String(font.to_string()));
-
-    let mut window_settings = Dictionary::new();
-    window_settings.insert(profile.to_string(), Value::Dictionary(profile_settings));
-
-    let mut root = Dictionary::new();
-    root.insert(
-        "Default Window Settings".to_string(),
-        Value::String(profile.to_string()),
-    );
-    root.insert(
-        "Window Settings".to_string(),
-        Value::Dictionary(window_settings),
-    );
-
-    Value::Dictionary(root)
-        .to_file_xml(&plist_path)
-        .expect("failed to write terminal plist fixture");
+    std::fs::copy(&fixture_path, &plist_path).expect("failed to copy terminal plist fixture");
 }
