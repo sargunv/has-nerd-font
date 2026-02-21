@@ -4,6 +4,13 @@ A fast, dependency-free CLI tool that detects whether the current terminal
 session can render Nerd Font glyphs. Analogous to `supports-color` or
 `supports-hyperlinks` in the Node/Rust ecosystems.
 
+## Current implementation status
+
+This v1 vertical slice currently implements only the `Terminal.app` config
+resolver in Layer 3. The other resolver designs in this document (Kitty,
+Alacritty, iTerm2, VSCode, Zed, Hyper, etc.) remain planned and intentionally
+return `no_resolver` in the current code.
+
 ## Usage
 
 ```bash
