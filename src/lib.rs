@@ -1,12 +1,17 @@
 use std::path::Path;
 
-use serde::{Deserialize, Serialize};
+mod types;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct DetectionResult {
-    pub detected: bool,
-}
+pub use types::{Confidence, DetectionResult, DetectionSource, Terminal};
 
 pub fn detect(_vars: &[(String, String)], _cwd: &Path) -> DetectionResult {
-    DetectionResult { detected: false }
+    DetectionResult {
+        detected: None,
+        source: DetectionSource::UnknownTerminal,
+        terminal: None,
+        font: None,
+        config_path: None,
+        profile: None,
+        confidence: Confidence::Certain,
+    }
 }
