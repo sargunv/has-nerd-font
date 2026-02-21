@@ -25,6 +25,14 @@ pub fn detect(vars: &[(String, String)]) -> TerminalDecision {
         return decide(terminal);
     }
 
+    if env_value(vars, "OPENCODE_TERMINAL") == Some("1") {
+        return decide(Terminal::OpenCode);
+    }
+
+    if env_value(vars, "CONDUCTOR_WORKSPACE_NAME").is_some() {
+        return decide(Terminal::Conductor);
+    }
+
     TerminalDecision::Unknown
 }
 

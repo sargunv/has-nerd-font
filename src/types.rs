@@ -33,6 +33,8 @@ pub enum DetectionSource {
 pub enum Terminal {
     Ghostty,
     WezTerm,
+    OpenCode,
+    Conductor,
     Kitty,
     Alacritty,
     ITerm2,
@@ -45,7 +47,10 @@ pub enum Terminal {
 
 impl Terminal {
     pub fn is_bundled(&self) -> bool {
-        matches!(self, Self::Ghostty | Self::WezTerm)
+        matches!(
+            self,
+            Self::Ghostty | Self::WezTerm | Self::OpenCode | Self::Conductor
+        )
     }
 }
 
