@@ -35,6 +35,27 @@ fn opencode_bundled_terminal_snapshots_json_and_explain() {
 }
 
 #[test]
+fn kitty_bundled_terminal_snapshots_json_and_explain() {
+    let output = support::run_cli(&["--json", "--explain"], &[("TERM_PROGRAM", "kitty")], None);
+
+    assert_eq!(output.status.code(), Some(0));
+    assert_snapshot!("bundled_kitty_json", support::stdout_json_snapshot(&output));
+    assert_snapshot!("bundled_kitty_explain", support::stderr_text(&output));
+}
+
+#[test]
+fn kitty_bundled_terminal_via_term_snapshots_json_and_explain() {
+    let output = support::run_cli(&["--json", "--explain"], &[("TERM", "xterm-kitty")], None);
+
+    assert_eq!(output.status.code(), Some(0));
+    assert_snapshot!(
+        "bundled_kitty_term_json",
+        support::stdout_json_snapshot(&output)
+    );
+    assert_snapshot!("bundled_kitty_term_explain", support::stderr_text(&output));
+}
+
+#[test]
 fn conductor_bundled_terminal_snapshots_json_and_explain() {
     let output = support::run_cli(
         &["--json", "--explain"],

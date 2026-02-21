@@ -49,7 +49,7 @@ impl Terminal {
     pub fn is_bundled(&self) -> bool {
         matches!(
             self,
-            Self::Ghostty | Self::WezTerm | Self::OpenCode | Self::Conductor
+            Self::Ghostty | Self::WezTerm | Self::Kitty | Self::OpenCode | Self::Conductor
         )
     }
 }

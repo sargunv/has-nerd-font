@@ -55,6 +55,7 @@ fn from_term_program(value: &str) -> Option<Terminal> {
     match normalized.as_str() {
         "ghostty" => Some(Terminal::Ghostty),
         "wezterm" => Some(Terminal::WezTerm),
+        "kitty" => Some(Terminal::Kitty),
         "iterm.app" => Some(Terminal::ITerm2),
         "apple_terminal" => Some(Terminal::TerminalApp),
         "vscode" => Some(Terminal::Vscode),
