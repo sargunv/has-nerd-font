@@ -1,0 +1,27 @@
+[settings]
+experimental = true
+pin = true
+
+[hooks]
+postinstall = ["hk install --mise", "cargo fetch"]
+
+[tools]
+rust = { version = "1.93.0", profile = "default" }
+dprint = "0.51.1"
+hk = "1.36.0"
+pkl = "0.30.2"
+
+[tasks."build:release"]
+run = ["cargo build --release"]
+
+[tasks.test]
+run = ["cargo test"]
+
+[tasks.run]
+run = ["cargo run"]
+
+[tasks.check]
+run = ["hk check --all"]
+
+[tasks.fix]
+run = ["hk fix --all"]

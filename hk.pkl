@@ -1,0 +1,29 @@
+amends "package://github.com/jdx/hk/releases/download/v1.36.0/hk@1.36.0#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v1.36.0/hk@1.36.0#/Builtins.pkl"
+
+local allSteps = new Mapping<String, Step> {
+  // formatters
+  ["dprint"] = Builtins.dprint
+  ["cargo_fmt"] = Builtins.cargo_fmt
+  ["pkl_format"] = Builtins.pkl_format
+
+  // linters
+  ["cargo_check"] = Builtins.cargo_check
+  ["cargo_clippy"] = Builtins.cargo_clippy
+  ["pkl"] = Builtins.pkl
+}
+
+hooks {
+  ["pre-commit"] {
+    fix = true
+    stash = "git"
+    steps = allSteps
+  }
+  ["fix"] {
+    fix = true
+    steps = allSteps
+  }
+  ["check"] {
+    steps = allSteps
+  }
+}
