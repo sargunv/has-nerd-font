@@ -13,7 +13,7 @@ fn sample_result(source: DetectionSource, detected: Option<bool>) -> DetectionRe
 }
 
 #[test]
-fn exit_code_maps_from_source_and_detected() {
+fn detection_result_contract_exit_code_maps_from_source_and_detected() {
     let cases = [
         (sample_result(DetectionSource::EnvVar, Some(true)), 0),
         (
@@ -52,7 +52,7 @@ fn exit_code_maps_from_source_and_detected() {
 }
 
 #[test]
-fn result_serializes_key_fields_for_json_output() {
+fn detection_result_contract_result_serializes_key_fields_for_json_output() {
     let result = sample_result(DetectionSource::TerminalConfig, Some(false));
     let json = serde_json::to_value(&result).expect("result should serialize");
 
@@ -73,7 +73,7 @@ fn result_serializes_key_fields_for_json_output() {
 }
 
 #[test]
-fn explain_mentions_key_semantics() {
+fn detection_result_contract_explain_mentions_key_semantics() {
     let explicit_disable = sample_result(DetectionSource::ExplicitDisable, Some(false));
     let unknown_terminal = sample_result(DetectionSource::UnknownTerminal, None);
 
