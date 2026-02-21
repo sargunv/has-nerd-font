@@ -17,6 +17,9 @@ run = ["cargo build --release"]
 [tasks.test]
 run = ["cargo test"]
 
+[tasks."test:accept"]
+run = ["INSTA_UPDATE=always cargo test"]
+
 [tasks.run]
 run = ["cargo run"]
 
