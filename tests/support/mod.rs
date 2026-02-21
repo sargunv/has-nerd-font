@@ -1,7 +1,6 @@
 #![allow(dead_code)]
 
 use std::path::Path;
-#[cfg(target_os = "macos")]
 use std::path::PathBuf;
 use std::process::{Command, Output};
 
@@ -24,7 +23,9 @@ pub fn run_cli(args: &[&str], env: &[(&str, &str)], cwd: Option<&Path>) -> Outpu
 }
 
 pub fn stdout_text(output: &Output) -> String {
-    String::from_utf8(output.stdout.clone()).expect("stdout should be valid utf-8")
+    std::str::from_utf8(&output.stdout)
+        .expect("stdout should be valid utf-8")
+        .to_owned()
 }
 
 pub fn stdout_json_snapshot(output: &Output) -> String {
@@ -34,10 +35,7 @@ pub fn stdout_json_snapshot(output: &Output) -> String {
     if let Some(config_path) = json.get_mut("config_path")
         && let Some(path) = config_path.as_str()
     {
-        let scenario_root = std::env::temp_dir()
-            .join("has-nerd-font-snapshots")
-            .to_string_lossy()
-            .to_string();
+        let scenario_root = snapshot_root().to_string_lossy().to_string();
 
         let normalized = path.replace(&scenario_root, "<SCENARIO_HOME>");
         *config_path = Value::String(normalized);
@@ -50,14 +48,18 @@ pub fn stdout_json_snapshot(output: &Output) -> String {
 }
 
 pub fn stderr_text(output: &Output) -> String {
-    String::from_utf8(output.stderr.clone()).expect("stderr should be valid utf-8")
+    std::str::from_utf8(&output.stderr)
+        .expect("stderr should be valid utf-8")
+        .to_owned()
+}
+
+fn snapshot_root() -> PathBuf {
+    std::env::temp_dir().join("has-nerd-font-snapshots")
 }
 
 #[cfg(target_os = "macos")]
 pub fn scenario_home(name: &str) -> PathBuf {
-    let path = std::env::temp_dir()
-        .join("has-nerd-font-snapshots")
-        .join(name);
+    let path = snapshot_root().join(name);
     let _ = std::fs::remove_dir_all(&path);
     std::fs::create_dir_all(&path).expect("failed to create scenario home");
     path

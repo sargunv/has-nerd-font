@@ -7,14 +7,7 @@ mod terminal_app;
 pub fn resolve(terminal: Terminal, vars: &[(String, String)], _cwd: &Path) -> DetectionResult {
     match terminal {
         Terminal::TerminalApp => terminal_app::resolve(vars),
-        Terminal::Kitty
-        | Terminal::Alacritty
-        | Terminal::ITerm2
-        | Terminal::Vscode
-        | Terminal::Zed
-        | Terminal::Hyper => no_resolver(terminal),
-        Terminal::Ghostty | Terminal::WezTerm => no_resolver(terminal),
-        Terminal::Unknown(_) => no_resolver(terminal),
+        _ => no_resolver(terminal),
     }
 }
 
