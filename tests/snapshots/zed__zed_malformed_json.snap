@@ -1,0 +1,14 @@
+---
+source: tests/zed.rs
+expression: "support::stdout_json_snapshot(&output)"
+---
+{
+  "confidence": "certain",
+  "config_path": "<SCENARIO_HOME>/zed-malformed/.config/zed/settings.json",
+  "detected": null,
+  "error_reason": "failed to parse <SCENARIO_HOME>/zed-malformed/.config/zed/settings.json: expected ident at line 1 column 2",
+  "font": null,
+  "profile": null,
+  "source": "config_error",
+  "terminal": "zed"
+}

@@ -1,0 +1,13 @@
+---
+source: tests/zed.rs
+expression: "support::stdout_json_snapshot(&output)"
+---
+{
+  "confidence": "certain",
+  "config_path": "<SCENARIO_HOME>/zed-default/.config/zed/settings.json",
+  "detected": false,
+  "font": "Monaco",
+  "profile": null,
+  "source": "terminal_config",
+  "terminal": "zed"
+}

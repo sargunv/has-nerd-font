@@ -1,0 +1,5 @@
+---
+source: tests/zed.rs
+expression: "support::stderr_text_normalized(&output, &[])"
+---
+failed to read terminal configuration: failed to parse <SCENARIO_HOME>/zed-malformed/.config/zed/settings.json: expected ident at line 1 column 2
