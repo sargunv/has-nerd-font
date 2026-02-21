@@ -2,10 +2,12 @@ use std::path::Path;
 
 use crate::{Confidence, DetectionResult, DetectionSource, Terminal};
 
+mod iterm2;
 mod terminal_app;
 
 pub fn resolve(terminal: Terminal, vars: &[(String, String)], _cwd: &Path) -> DetectionResult {
     match terminal {
+        Terminal::ITerm2 => iterm2::resolve(vars),
         Terminal::TerminalApp => terminal_app::resolve(vars),
         _ => no_resolver(terminal),
     }

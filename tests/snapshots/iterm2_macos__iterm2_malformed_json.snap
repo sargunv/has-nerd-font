@@ -1,0 +1,14 @@
+---
+source: tests/iterm2_macos.rs
+expression: "support::stdout_json_snapshot(&output)"
+---
+{
+  "confidence": "certain",
+  "config_path": "<SCENARIO_HOME>/iterm2-malformed/Library/Preferences/com.googlecode.iterm2.plist",
+  "detected": null,
+  "error_reason": "failed to read plist: ExpectedEndOfEventStream { found: String }",
+  "font": null,
+  "profile": null,
+  "source": "config_error",
+  "terminal": "i_term2"
+}

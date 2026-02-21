@@ -81,3 +81,20 @@ pub fn install_terminal_app_fixture(home: &Path, fixture_name: &str) {
 
     std::fs::copy(&fixture_path, &plist_path).expect("failed to copy terminal plist fixture");
 }
+
+#[cfg(target_os = "macos")]
+pub fn install_iterm2_fixture(home: &Path, fixture_name: &str) {
+    let fixture_path = Path::new("tests")
+        .join("fixtures")
+        .join("iterm2")
+        .join(fixture_name);
+    let plist_path = home.join("Library/Preferences/com.googlecode.iterm2.plist");
+    std::fs::create_dir_all(
+        plist_path
+            .parent()
+            .expect("iTerm2 plist should have parent directory"),
+    )
+    .expect("failed to create iTerm2 plist directory");
+
+    std::fs::copy(&fixture_path, &plist_path).expect("failed to copy iTerm2 plist fixture");
+}

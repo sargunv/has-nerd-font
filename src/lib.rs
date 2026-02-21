@@ -2,6 +2,8 @@ use std::path::Path;
 
 mod config;
 mod env;
+mod font;
+mod plist;
 mod terminal;
 mod types;
 

@@ -1,0 +1,5 @@
+---
+source: tests/iterm2_macos.rs
+expression: "support::stderr_text(&output)"
+---
+failed to read terminal configuration: failed to read plist: ExpectedEndOfEventStream { found: String }
