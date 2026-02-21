@@ -114,6 +114,7 @@ fn unmapped_term_program_in_json_mode_returns_no_resolver_exit_code() {
     let json = parse_stdout_json(&output);
     assert_eq!(json["exit_code"].as_i64(), Some(4));
     assert_eq!(json["source"].as_str(), Some("no_resolver"));
+    assert_eq!(json["terminal"].as_str(), Some("CoolNewTerm"));
 }
 
 #[test]

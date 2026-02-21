@@ -84,6 +84,29 @@ fn detection_result_contract_config_error_json_keeps_source_string_and_reason_fi
 }
 
 #[test]
+fn detection_result_contract_unknown_terminal_serializes_as_raw_string() {
+    let mut result = sample_result(DetectionSource::NoResolver, None);
+    result.terminal = Some(Terminal::Unknown("CoolNewTerm".to_string()));
+
+    let json = result.to_json_value();
+
+    assert_eq!(
+        json["terminal"],
+        serde_json::Value::String("CoolNewTerm".to_string())
+    );
+}
+
+#[test]
+fn detection_result_contract_missing_terminal_serializes_as_null() {
+    let mut result = sample_result(DetectionSource::UnknownTerminal, None);
+    result.terminal = None;
+
+    let json = result.to_json_value();
+
+    assert_eq!(json["terminal"], serde_json::Value::Null);
+}
+
+#[test]
 fn detection_result_contract_explain_mentions_key_semantics() {
     let explicit_disable = sample_result(DetectionSource::ExplicitDisable, Some(false));
     let unknown_terminal = sample_result(DetectionSource::UnknownTerminal, None);
