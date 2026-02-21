@@ -90,9 +90,22 @@ fn read_settings(path: &Path) -> Result<Option<ZedSettings>, String> {
         Err(e) => return Err(format!("failed to read {}: {e}", path.display())),
     };
 
-    match serde_jsonc::from_str::<ZedSettings>(&content) {
+    match serde_json5::from_str::<ZedSettings>(&content) {
         Ok(settings) => Ok(Some(settings)),
-        Err(e) => Err(format!("failed to parse {}: {e}", path.display())),
+        Err(e) => {
+            let location = match &e {
+                serde_json5::Error::Message { location, .. } => location.as_ref(),
+            };
+            match location {
+                Some(loc) => Err(format!(
+                    "failed to parse {} at line {} column {}",
+                    path.display(),
+                    loc.line,
+                    loc.column
+                )),
+                None => Err(format!("failed to parse {}: {e}", path.display())),
+            }
+        }
     }
 }
 
