@@ -1,0 +1,14 @@
+---
+source: tests/terminal_app_macos.rs
+expression: "support::stdout_json_snapshot(&output)"
+---
+{
+  "confidence": "certain",
+  "config_path": "<SCENARIO_HOME>/terminal-app-malformed/Library/Preferences/com.apple.Terminal.plist",
+  "detected": null,
+  "error_reason": "failed to read plist: ExpectedEndOfEventStream { found: String }",
+  "font": null,
+  "profile": null,
+  "source": "config_error",
+  "terminal": "terminal_app"
+}

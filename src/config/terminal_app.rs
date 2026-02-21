@@ -134,10 +134,9 @@ fn is_nerd_font(font: &str) -> bool {
     normalized
         .split(|ch: char| !ch.is_ascii_alphanumeric())
         .any(|token| {
-            matches!(token, "NF" | "NFM" | "NFP")
-                || token.ends_with("NF")
-                || token.ends_with("NFM")
-                || token.ends_with("NFP")
+            ["NF", "NFM", "NFP"]
+                .iter()
+                .any(|suffix| token.ends_with(suffix))
         })
 }
 
