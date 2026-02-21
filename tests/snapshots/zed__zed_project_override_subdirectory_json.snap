@@ -1,0 +1,13 @@
+---
+source: tests/zed.rs
+expression: "support::stdout_json_snapshot_with_extra_normalizations(&output,\n&[(&project_root_str, \"<PROJECT_CWD>\")])"
+---
+{
+  "confidence": "certain",
+  "config_path": "<PROJECT_CWD>/.zed/settings.json",
+  "detected": true,
+  "font": "JetBrainsMono Nerd Font",
+  "profile": null,
+  "source": "terminal_config",
+  "terminal": "zed"
+}

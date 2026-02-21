@@ -25,21 +25,23 @@ pub fn resolve(vars: &[(String, String)], cwd: &Path) -> DetectionResult {
         _ => return config_error("HOME is not set".to_string(), None),
     };
 
-    let project_path = cwd.join(".zed/settings.json");
-    let user_path = PathBuf::from(home).join(".config/zed/settings.json");
+    let home_path = PathBuf::from(home);
+    let user_path = home_path.join(".config/zed/settings.json");
 
-    let project_settings = read_settings(&project_path);
+    // Walk up from cwd to $HOME looking for .zed/settings.json
+    let project_result = find_project_settings(cwd, &home_path);
+
     let user_settings = read_settings(&user_path);
 
     // If either file had a parse error, report it
-    if let Err(reason) = &project_settings {
-        return config_error(reason.clone(), Some(project_path));
+    if let Err((reason, path)) = &project_result {
+        return config_error(reason.clone(), Some(path.clone()));
     }
     if let Err(reason) = &user_settings {
         return config_error(reason.clone(), Some(user_path));
     }
 
-    let project_settings = project_settings.unwrap();
+    let (project_settings, project_path) = project_result.unwrap();
     let user_settings = user_settings.unwrap();
 
     // If neither file exists, report no settings file found
@@ -55,14 +57,14 @@ pub fn resolve(vars: &[(String, String)], cwd: &Path) -> DetectionResult {
             let config_path = if from_project {
                 project_path
             } else {
-                user_path
+                Some(user_path)
             };
             DetectionResult {
                 detected: Some(is_nerd_font(&font)),
                 source: DetectionSource::TerminalConfig,
                 terminal: Some(Terminal::Zed),
                 font: Some(font),
-                config_path: Some(config_path),
+                config_path,
                 profile: None,
                 error_reason: None,
                 confidence: Confidence::Certain,
@@ -71,7 +73,7 @@ pub fn resolve(vars: &[(String, String)], cwd: &Path) -> DetectionResult {
         None => config_error(
             "no font configured".to_string(),
             if project_settings.is_some() {
-                Some(project_path)
+                project_path
             } else {
                 Some(user_path)
             },
@@ -79,14 +81,40 @@ pub fn resolve(vars: &[(String, String)], cwd: &Path) -> DetectionResult {
     }
 }
 
+/// Walk up from `cwd` to `home` (inclusive) looking for `.zed/settings.json`.
+/// Returns:
+/// - `Ok((Some(settings), Some(path)))` if found and parsed
+/// - `Ok((None, None))` if not found in any ancestor
+/// - `Err((reason, path))` if found but malformed
+fn find_project_settings(
+    cwd: &Path,
+    home: &Path,
+) -> Result<(Option<ZedSettings>, Option<PathBuf>), (String, PathBuf)> {
+    let mut dir = Some(cwd);
+    while let Some(current) = dir {
+        let candidate = current.join(".zed/settings.json");
+        match read_settings(&candidate) {
+            Ok(Some(settings)) => return Ok((Some(settings), Some(candidate))),
+            Ok(None) => {} // not found here, keep walking
+            Err(reason) => return Err((reason, candidate)),
+        }
+        if current == home {
+            break;
+        }
+        dir = current.parent();
+    }
+    Ok((None, None))
+}
+
 /// Read and parse a settings file. Returns:
 /// - `Ok(Some(settings))` if the file exists and was parsed successfully
-/// - `Ok(None)` if the file does not exist
+/// - `Ok(None)` if the file does not exist or is inaccessible
 /// - `Err(reason)` if the file exists but is malformed
 fn read_settings(path: &Path) -> Result<Option<ZedSettings>, String> {
     let content = match std::fs::read_to_string(path) {
         Ok(content) => content,
         Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(None),
+        Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied => return Ok(None),
         Err(e) => return Err(format!("failed to read {}: {e}", path.display())),
     };
 
