@@ -7,6 +7,7 @@ pub enum EnvDecision {
 pub fn detect(vars: &[(String, String)]) -> EnvDecision {
     let Some(raw) = vars
         .iter()
+        .rev()
         .find_map(|(key, value)| (key == "NERD_FONT").then_some(value))
     else {
         return EnvDecision::Continue;

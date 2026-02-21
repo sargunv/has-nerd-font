@@ -62,3 +62,47 @@ fn unrecognized_nerd_font_value_continues_to_later_layers() {
     assert_eq!(result.source, DetectionSource::NoResolver);
     assert_eq!(result.detected, None);
 }
+
+#[test]
+fn duplicate_nerd_font_keys_use_last_value_when_truthy_then_falsy() {
+    let env = vars(&[
+        ("NERD_FONT", "yes"),
+        ("TERM_PROGRAM", "ghostty"),
+        ("NERD_FONT", "0"),
+    ]);
+
+    let result = detect(&env, Path::new("."));
+
+    assert_eq!(result.source, DetectionSource::ExplicitDisable);
+    assert_eq!(result.detected, Some(false));
+}
+
+#[test]
+fn duplicate_nerd_font_keys_use_last_value_when_falsy_then_truthy() {
+    let env = vars(&[
+        ("NERD_FONT", "0"),
+        ("TERM_PROGRAM", "Apple_Terminal"),
+        ("NERD_FONT", "true"),
+    ]);
+
+    let result = detect(&env, Path::new("."));
+
+    assert_eq!(result.source, DetectionSource::EnvVar);
+    assert_eq!(result.detected, Some(true));
+}
+
+#[test]
+fn empty_or_whitespace_nerd_font_values_continue_to_later_layers() {
+    for token in ["", " ", "   ", "\t", "\n"] {
+        let env = vars(&[("NERD_FONT", token), ("TERM_PROGRAM", "ghostty")]);
+
+        let result = detect(&env, Path::new("."));
+
+        assert_eq!(
+            result.source,
+            DetectionSource::BundledTerminal,
+            "token {token:?} should continue past env layer"
+        );
+        assert_eq!(result.detected, Some(true));
+    }
+}
