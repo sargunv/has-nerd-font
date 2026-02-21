@@ -76,11 +76,11 @@ fn resolve_font(root: &plist::Dictionary, profile: &str) -> Result<String, Strin
 
     let font = profile_settings
         .get("Font")
-        .and_then(font_value_to_string)
+        .and_then(font_name_from_keyed_archive)
         .or_else(|| {
             profile_settings
                 .get("Normal Font")
-                .and_then(font_value_to_string)
+                .and_then(font_name_from_keyed_archive)
         })
         .ok_or_else(|| format!("missing font descriptor for profile {profile}"))?;
 
@@ -92,16 +92,32 @@ fn resolve_font(root: &plist::Dictionary, profile: &str) -> Result<String, Strin
 }
 
 #[cfg(target_os = "macos")]
-fn font_value_to_string(value: &plist::Value) -> Option<String> {
-    if let Some(font) = value.as_string() {
-        return Some(font.to_string());
-    }
+fn font_name_from_keyed_archive(value: &plist::Value) -> Option<String> {
+    let bytes = value.as_data()?;
+    let archive = plist::Value::from_reader(std::io::Cursor::new(bytes)).ok()?;
+    let archive = archive.as_dictionary()?;
 
-    let descriptor = value.as_dictionary()?;
-    descriptor
-        .get("FontName")
-        .and_then(plist::Value::as_string)
+    let objects = archive.get("$objects")?.as_array()?;
+    let root = archive
+        .get("$top")?
+        .as_dictionary()?
+        .get("root")
+        .and_then(uid_index)?;
+
+    let root = objects.get(root)?.as_dictionary()?;
+    let name_index = root.get("NSName").and_then(uid_index)?;
+    objects
+        .get(name_index)?
+        .as_string()
         .map(ToString::to_string)
+}
+
+#[cfg(target_os = "macos")]
+fn uid_index(value: &plist::Value) -> Option<usize> {
+    match value {
+        plist::Value::Uid(uid) => Some(uid.get() as usize),
+        _ => None,
+    }
 }
 
 fn var<'a>(vars: &'a [(String, String)], key: &str) -> Option<&'a str> {
@@ -110,14 +126,19 @@ fn var<'a>(vars: &'a [(String, String)], key: &str) -> Option<&'a str> {
 }
 
 fn is_nerd_font(font: &str) -> bool {
-    let normalized = font.trim().to_ascii_lowercase();
-    if normalized.contains("nerd font") || normalized.contains("nerdfont") {
+    let normalized = font.trim();
+    if normalized.contains("Nerd Font") || normalized.contains("NerdFont") {
         return true;
     }
 
     normalized
         .split(|ch: char| !ch.is_ascii_alphanumeric())
-        .any(|token| matches!(token, "nf" | "nfm" | "nfp"))
+        .any(|token| {
+            matches!(token, "NF" | "NFM" | "NFP")
+                || token.ends_with("NF")
+                || token.ends_with("NFM")
+                || token.ends_with("NFP")
+        })
 }
 
 fn config_error(

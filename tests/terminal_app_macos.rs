@@ -16,7 +16,7 @@ fn terminal_app_real_default_snapshots_json_and_explain() {
         None,
     );
 
-    assert_eq!(output.status.code(), Some(5));
+    assert_eq!(output.status.code(), Some(6));
     assert_snapshot!(
         "terminal_app_real_default_json",
         support::stdout_json_snapshot(&output)
@@ -39,7 +39,7 @@ fn terminal_app_real_nerd_font_snapshots_json_and_explain() {
         None,
     );
 
-    assert_eq!(output.status.code(), Some(5));
+    assert_eq!(output.status.code(), Some(0));
     assert_snapshot!(
         "terminal_app_real_nerd_font_json",
         support::stdout_json_snapshot(&output)

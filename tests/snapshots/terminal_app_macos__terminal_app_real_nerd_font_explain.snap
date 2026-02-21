@@ -2,4 +2,4 @@
 source: tests/terminal_app_macos.rs
 expression: "support::stderr_text(&output)"
 ---
-failed to read terminal configuration: missing font descriptor for profile Clear Dark
+terminal configuration indicates a Nerd Font is active

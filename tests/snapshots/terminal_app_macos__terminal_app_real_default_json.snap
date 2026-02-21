@@ -5,10 +5,9 @@ expression: "support::stdout_json_snapshot(&output)"
 {
   "confidence": "certain",
   "config_path": "<SCENARIO_HOME>/terminal-app-real-default/Library/Preferences/com.apple.Terminal.plist",
-  "detected": null,
-  "error_reason": "missing font descriptor for profile Clear Dark",
-  "font": null,
+  "detected": false,
+  "font": "SFMonoTerminal-Regular",
   "profile": "Clear Dark",
-  "source": "config_error",
+  "source": "terminal_config",
   "terminal": "terminal_app"
 }
