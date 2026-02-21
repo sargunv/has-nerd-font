@@ -1,0 +1,5 @@
+---
+source: tests/iterm2_macos.rs
+expression: "support::stderr_text(&output)"
+---
+terminal configuration indicates a Nerd Font is active

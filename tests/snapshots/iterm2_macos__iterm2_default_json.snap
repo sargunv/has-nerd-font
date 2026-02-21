@@ -1,0 +1,13 @@
+---
+source: tests/iterm2_macos.rs
+expression: "support::stdout_json_snapshot(&output)"
+---
+{
+  "confidence": "certain",
+  "config_path": "<SCENARIO_HOME>/iterm2-real-default/Library/Preferences/com.googlecode.iterm2.plist",
+  "detected": false,
+  "font": "Monaco 12",
+  "profile": "Default",
+  "source": "terminal_config",
+  "terminal": "i_term2"
+}

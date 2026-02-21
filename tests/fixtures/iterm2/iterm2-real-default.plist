@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Default Bookmark Guid</key>
+	<string>C858536F-61C4-44D5-86CE-86FCD0090846</string>
+	<key>New Bookmarks</key>
+	<array>
+		<dict>
+			<key>Guid</key>
+			<string>C858536F-61C4-44D5-86CE-86FCD0090846</string>
+			<key>Name</key>
+			<string>Default</string>
+			<key>Normal Font</key>
+			<string>Monaco 12</string>
+		</dict>
+	</array>
+</dict>
+</plist>

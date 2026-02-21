@@ -1,6 +1,10 @@
 use std::path::PathBuf;
 
-use crate::{Confidence, DetectionResult, DetectionSource, Terminal};
+use crate::{
+    Confidence, DetectionResult, DetectionSource, Terminal,
+    font::is_nerd_font,
+    plist::{font_name_from_keyed_archive, load_root_dictionary},
+};
 
 pub fn resolve(vars: &[(String, String)]) -> DetectionResult {
     let home = match var(vars, "HOME") {
@@ -16,12 +20,7 @@ pub fn resolve(vars: &[(String, String)]) -> DetectionResult {
 #[cfg(target_os = "macos")]
 fn resolve_from_plist(config_path: PathBuf) -> DetectionResult {
     let resolved = (|| -> Result<(String, String), (String, Option<String>)> {
-        let value = plist::Value::from_file(&config_path)
-            .map_err(|err| (format!("failed to read plist: {err}"), None))?;
-
-        let root = value
-            .as_dictionary()
-            .ok_or_else(|| ("terminal plist root is not a dictionary".to_string(), None))?;
+        let root = load_root_dictionary(&config_path).map_err(|reason| (reason, None))?;
 
         let profile = root
             .get("Default Window Settings")
@@ -31,7 +30,7 @@ fn resolve_from_plist(config_path: PathBuf) -> DetectionResult {
             .ok_or_else(|| ("missing Default Window Settings".to_string(), None))?;
 
         let font =
-            resolve_font(root, &profile).map_err(|reason| (reason, Some(profile.clone())))?;
+            resolve_font(&root, &profile).map_err(|reason| (reason, Some(profile.clone())))?;
 
         Ok((profile, font))
     })();
@@ -91,53 +90,9 @@ fn resolve_font(root: &plist::Dictionary, profile: &str) -> Result<String, Strin
     Ok(font)
 }
 
-#[cfg(target_os = "macos")]
-fn font_name_from_keyed_archive(value: &plist::Value) -> Option<String> {
-    let bytes = value.as_data()?;
-    let archive = plist::Value::from_reader(std::io::Cursor::new(bytes)).ok()?;
-    let archive = archive.as_dictionary()?;
-
-    let objects = archive.get("$objects")?.as_array()?;
-    let root = archive
-        .get("$top")?
-        .as_dictionary()?
-        .get("root")
-        .and_then(uid_index)?;
-
-    let root = objects.get(root)?.as_dictionary()?;
-    let name_index = root.get("NSName").and_then(uid_index)?;
-    objects
-        .get(name_index)?
-        .as_string()
-        .map(ToString::to_string)
-}
-
-#[cfg(target_os = "macos")]
-fn uid_index(value: &plist::Value) -> Option<usize> {
-    match value {
-        plist::Value::Uid(uid) => Some(uid.get() as usize),
-        _ => None,
-    }
-}
-
 fn var<'a>(vars: &'a [(String, String)], key: &str) -> Option<&'a str> {
     vars.iter()
         .find_map(|(k, v)| (k == key).then_some(v.as_str()))
-}
-
-fn is_nerd_font(font: &str) -> bool {
-    let normalized = font.trim();
-    if normalized.contains("Nerd Font") || normalized.contains("NerdFont") {
-        return true;
-    }
-
-    normalized
-        .split(|ch: char| !ch.is_ascii_alphanumeric())
-        .any(|token| {
-            ["NF", "NFM", "NFP"]
-                .iter()
-                .any(|suffix| token.ends_with(suffix))
-        })
 }
 
 fn config_error(
