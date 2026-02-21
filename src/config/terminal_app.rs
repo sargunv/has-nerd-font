@@ -15,45 +15,30 @@ pub fn resolve(vars: &[(String, String)]) -> DetectionResult {
 
 #[cfg(target_os = "macos")]
 fn resolve_from_plist(config_path: PathBuf) -> DetectionResult {
-    let value = match plist::Value::from_file(&config_path) {
-        Ok(value) => value,
-        Err(err) => {
-            return config_error(
-                format!("failed to read plist: {err}"),
-                None,
-                Some(config_path),
-            );
-        }
-    };
+    let resolved = (|| -> Result<(String, String), (String, Option<String>)> {
+        let value = plist::Value::from_file(&config_path)
+            .map_err(|err| (format!("failed to read plist: {err}"), None))?;
 
-    let root = match value.as_dictionary() {
-        Some(root) => root,
-        None => {
-            return config_error(
-                "terminal plist root is not a dictionary".to_string(),
-                None,
-                Some(config_path),
-            );
-        }
-    };
+        let root = value
+            .as_dictionary()
+            .ok_or_else(|| ("terminal plist root is not a dictionary".to_string(), None))?;
 
-    let profile = match root
-        .get("Default Window Settings")
-        .and_then(plist::Value::as_string)
-    {
-        Some(profile) if !profile.is_empty() => profile.to_string(),
-        _ => {
-            return config_error(
-                "missing Default Window Settings".to_string(),
-                None,
-                Some(config_path),
-            );
-        }
-    };
+        let profile = root
+            .get("Default Window Settings")
+            .and_then(plist::Value::as_string)
+            .filter(|profile| !profile.is_empty())
+            .map(ToString::to_string)
+            .ok_or_else(|| ("missing Default Window Settings".to_string(), None))?;
 
-    let font = match resolve_font(root, &profile) {
-        Ok(font) => font,
-        Err(reason) => return config_error(reason, Some(profile), Some(config_path)),
+        let font =
+            resolve_font(root, &profile).map_err(|reason| (reason, Some(profile.clone())))?;
+
+        Ok((profile, font))
+    })();
+
+    let (profile, font) = match resolved {
+        Ok(resolved) => resolved,
+        Err((reason, profile)) => return config_error(reason, profile, Some(config_path)),
     };
 
     DetectionResult {
