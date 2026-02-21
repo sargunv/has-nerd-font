@@ -12,6 +12,10 @@ pub fn detect(vars: &[(String, String)]) -> EnvDecision {
         return EnvDecision::Continue;
     };
 
+    parse_nerd_font(raw)
+}
+
+fn parse_nerd_font(raw: &str) -> EnvDecision {
     let normalized = raw.trim().to_ascii_lowercase();
     match normalized.as_str() {
         "1" | "true" | "yes" => EnvDecision::OverrideEnabled,
