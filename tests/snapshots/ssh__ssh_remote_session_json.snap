@@ -1,0 +1,13 @@
+---
+source: tests/ssh.rs
+expression: "support::stdout_json_snapshot(&output)"
+---
+{
+  "confidence": "certain",
+  "config_path": null,
+  "detected": null,
+  "font": null,
+  "profile": null,
+  "source": "remote_session",
+  "terminal": "terminal_app"
+}

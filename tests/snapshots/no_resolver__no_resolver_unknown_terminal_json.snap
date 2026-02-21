@@ -1,0 +1,15 @@
+---
+source: tests/no_resolver.rs
+expression: "support::stdout_json_snapshot(&output)"
+---
+{
+  "confidence": "certain",
+  "config_path": null,
+  "detected": null,
+  "font": null,
+  "profile": null,
+  "source": "no_resolver",
+  "terminal": {
+    "unknown": "CoolNewTerm"
+  }
+}

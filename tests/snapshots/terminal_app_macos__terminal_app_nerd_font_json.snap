@@ -1,0 +1,13 @@
+---
+source: tests/terminal_app_macos.rs
+expression: "support::stdout_json_snapshot(&output)"
+---
+{
+  "confidence": "certain",
+  "config_path": "<SCENARIO_HOME>/terminal-app-nerd-font/Library/Preferences/com.apple.Terminal.plist",
+  "detected": true,
+  "font": "JetBrainsMono Nerd Font",
+  "profile": "Basic",
+  "source": "terminal_config",
+  "terminal": "terminal_app"
+}

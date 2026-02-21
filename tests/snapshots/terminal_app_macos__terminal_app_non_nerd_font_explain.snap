@@ -1,0 +1,5 @@
+---
+source: tests/terminal_app_macos.rs
+expression: "support::stderr_text(&output)"
+---
+terminal configuration does not indicate a Nerd Font

@@ -1,0 +1,13 @@
+---
+source: tests/terminal_app_macos.rs
+expression: "support::stdout_json_snapshot(&output)"
+---
+{
+  "confidence": "certain",
+  "config_path": "<SCENARIO_HOME>/terminal-app-non-nerd-font/Library/Preferences/com.apple.Terminal.plist",
+  "detected": false,
+  "font": "Menlo",
+  "profile": "Basic",
+  "source": "terminal_config",
+  "terminal": "terminal_app"
+}

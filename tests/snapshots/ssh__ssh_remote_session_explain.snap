@@ -1,0 +1,5 @@
+---
+source: tests/ssh.rs
+expression: "support::stderr_text(&output)"
+---
+running in remote session; local terminal config not inspected
