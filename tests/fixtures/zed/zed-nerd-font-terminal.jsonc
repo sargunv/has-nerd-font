@@ -1,0 +1,8 @@
+// Zed settings with a Nerd Font as terminal font
+{
+  "buffer_font_family": "Monaco",
+  "terminal": {
+    "font_family": "JetBrainsMono Nerd Font",
+    "font_size": 14
+  }
+}
