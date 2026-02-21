@@ -11,6 +11,9 @@ resolver in Layer 3. The other resolver designs in this document (Kitty,
 Alacritty, iTerm2, VSCode, Zed, Hyper, etc.) remain planned and intentionally
 return `no_resolver` in the current code.
 
+Implemented now: layered detection flow, bundled-terminal short-circuit,
+remote-session gate, and `Terminal.app` plist resolver.
+
 ## Usage
 
 ```bash
@@ -158,6 +161,9 @@ config files are expected to be on the same machine.
 #### Config file locations
 
 All paths respect `XDG_CONFIG_HOME` where applicable (default: `~/.config`).
+
+Status in current code: only `Terminal.app` is implemented; other rows are
+planned resolver targets.
 
 | Terminal     | Config path(s)                                      | Format                        |
 | ------------ | --------------------------------------------------- | ----------------------------- |
@@ -317,6 +323,9 @@ couldn't determine).
 
 ## Project Structure
 
+Current `src/config` implementation includes `mod.rs` and `terminal_app.rs`; the
+other resolver files below are planned target layout for follow-up slices.
+
 ```
 has-nerd-font/
 ├── Cargo.toml
@@ -406,6 +415,9 @@ impl DetectionResult {
 ```
 
 ## Dependencies
+
+Dependency status: `clap`, `serde`, `serde_json`, and macOS `plist` are used by
+the current v1 slice; `toml` is included for planned non-Terminal.app resolvers.
 
 | Crate                  | Purpose                                                   | Notes                                                       |
 | ---------------------- | --------------------------------------------------------- | ----------------------------------------------------------- |
