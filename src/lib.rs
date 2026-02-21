@@ -24,7 +24,7 @@ pub fn detect(vars: &[(String, String)], cwd: &Path) -> DetectionResult {
 
     match ssh_gate_layer(vars, terminal) {
         LayerOutcome::Final(result) => result,
-        LayerOutcome::Continue(terminal) => config::resolve(terminal, cwd),
+        LayerOutcome::Continue(terminal) => config::resolve(terminal, vars, cwd),
     }
 }
 

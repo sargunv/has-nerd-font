@@ -2,9 +2,11 @@ use std::path::Path;
 
 use crate::{Confidence, DetectionResult, DetectionSource, Terminal};
 
-pub fn resolve(terminal: Terminal, cwd: &Path) -> DetectionResult {
+mod terminal_app;
+
+pub fn resolve(terminal: Terminal, vars: &[(String, String)], _cwd: &Path) -> DetectionResult {
     match terminal {
-        Terminal::TerminalApp => resolve_terminal_app(cwd),
+        Terminal::TerminalApp => terminal_app::resolve(vars),
         Terminal::Kitty
         | Terminal::Alacritty
         | Terminal::ITerm2
@@ -15,19 +17,6 @@ pub fn resolve(terminal: Terminal, cwd: &Path) -> DetectionResult {
         Terminal::Unknown(name) => {
             config_error(format!("no resolver for unknown terminal: {name}"))
         }
-    }
-}
-
-fn resolve_terminal_app(_cwd: &Path) -> DetectionResult {
-    DetectionResult {
-        detected: None,
-        source: DetectionSource::ConfigError,
-        terminal: Some(Terminal::TerminalApp),
-        font: None,
-        config_path: None,
-        profile: None,
-        error_reason: Some("terminal_app resolver not implemented yet".to_string()),
-        confidence: Confidence::Certain,
     }
 }
 
