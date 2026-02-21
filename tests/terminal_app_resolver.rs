@@ -55,6 +55,42 @@ fn write_terminal_plist(home: &Path, profile: &str, font: &str) {
         .expect("failed to write terminal plist");
 }
 
+#[cfg(target_os = "macos")]
+fn assert_platform_font_result(
+    result: &has_nerd_font::DetectionResult,
+    expected_detected: bool,
+    expected_exit_code: i32,
+    expected_profile: &str,
+    expected_font: &str,
+    expected_path: PathBuf,
+) {
+    assert_eq!(result.source, DetectionSource::TerminalConfig);
+    assert_eq!(result.detected, Some(expected_detected));
+    assert_eq!(result.exit_code(), expected_exit_code);
+    assert_eq!(result.terminal, Some(Terminal::TerminalApp));
+    assert_eq!(result.profile.as_deref(), Some(expected_profile));
+    assert_eq!(result.font.as_deref(), Some(expected_font));
+    assert_eq!(result.config_path, Some(expected_path));
+}
+
+#[cfg(not(target_os = "macos"))]
+fn assert_platform_font_result(
+    result: &has_nerd_font::DetectionResult,
+    _expected_detected: bool,
+    _expected_exit_code: i32,
+    _expected_profile: &str,
+    _expected_font: &str,
+    expected_path: PathBuf,
+) {
+    assert_eq!(result.source, DetectionSource::ConfigError);
+    assert_eq!(result.detected, None);
+    assert_eq!(result.exit_code(), 5);
+    assert_eq!(result.terminal, Some(Terminal::TerminalApp));
+    assert_eq!(result.profile, None);
+    assert_eq!(result.font, None);
+    assert_eq!(result.config_path, Some(expected_path));
+}
+
 #[test]
 fn terminal_app_resolver_plist_with_nerd_font_detects_true_from_terminal_config() {
     let home = make_home_path("terminal-app-nf");
@@ -65,13 +101,14 @@ fn terminal_app_resolver_plist_with_nerd_font_detects_true_from_terminal_config(
 
     let result = detect(&env, Path::new("."));
 
-    assert_eq!(result.source, DetectionSource::TerminalConfig);
-    assert_eq!(result.detected, Some(true));
-    assert_eq!(result.exit_code(), 0);
-    assert_eq!(result.terminal, Some(Terminal::TerminalApp));
-    assert_eq!(result.profile.as_deref(), Some("Basic"));
-    assert_eq!(result.font.as_deref(), Some("JetBrainsMono Nerd Font"));
-    assert_eq!(result.config_path, Some(terminal_plist_path(&home)));
+    assert_platform_font_result(
+        &result,
+        true,
+        0,
+        "Basic",
+        "JetBrainsMono Nerd Font",
+        terminal_plist_path(&home),
+    );
 }
 
 #[test]
@@ -84,13 +121,14 @@ fn terminal_app_resolver_plist_with_non_nerd_font_detects_false_from_terminal_co
 
     let result = detect(&env, Path::new("."));
 
-    assert_eq!(result.source, DetectionSource::TerminalConfig);
-    assert_eq!(result.detected, Some(false));
-    assert_eq!(result.exit_code(), 6);
-    assert_eq!(result.terminal, Some(Terminal::TerminalApp));
-    assert_eq!(result.profile.as_deref(), Some("Basic"));
-    assert_eq!(result.font.as_deref(), Some("Menlo"));
-    assert_eq!(result.config_path, Some(terminal_plist_path(&home)));
+    assert_platform_font_result(
+        &result,
+        false,
+        6,
+        "Basic",
+        "Menlo",
+        terminal_plist_path(&home),
+    );
 }
 
 #[test]
