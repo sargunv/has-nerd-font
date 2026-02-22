@@ -1,20 +1,28 @@
-use std::sync::LazyLock;
-
-use regex::Regex;
-
-/// Matches font names containing "Nerd Font" / "NerdFont", or the abbreviated
-/// suffix convention "NF"/"NFM"/"NFP" preceded or followed by a space or hyphen
-/// (e.g. "JetBrainsMonoNFM-Regular", "JetBrainsMono NFM Regular",
-/// "MonaspiceNe NF").
-static NERD_FONT_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"Nerd\s?Font|NF[MP]?[\s-]|[\s-]NF[MP]?").unwrap());
-
 pub fn normalize_font_name(font: &str) -> String {
     font.trim().to_string()
 }
 
+/// Returns `true` if the font name looks like a Nerd Font.
+///
+/// Matches:
+///   - "Nerd Font" or "NerdFont" anywhere in the name
+///   - "NF", "NFM", or "NFP" with a space or hyphen on at least one side
+///     (e.g. "JetBrainsMonoNFM-Regular", "JetBrainsMono NFM Bold",
+///     "MonaspiceNe NF")
 pub fn is_nerd_font(font: &str) -> bool {
-    NERD_FONT_RE.is_match(font.trim())
+    let s = font.trim();
+    s.contains("Nerd Font")
+        || s.contains("NerdFont")
+        || has_nf_token(s, "NFM")
+        || has_nf_token(s, "NFP")
+        || has_nf_token(s, "NF")
+}
+
+/// Checks if `s` contains `token` with a space or hyphen on at least one side.
+fn has_nf_token(s: &str, token: &str) -> bool {
+    let sep_before: &[&str] = &[&format!(" {token}"), &format!("-{token}")];
+    let sep_after: &[&str] = &[&format!("{token} "), &format!("{token}-")];
+    sep_before.iter().any(|p| s.contains(p)) || sep_after.iter().any(|p| s.contains(p))
 }
 
 #[cfg(test)]
