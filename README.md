@@ -18,7 +18,53 @@ fi
 
 ## Installation
 
-TODO
+### mise
+
+```bash
+mise use -g "github:sargunv/has-nerd-font"
+```
+
+### chezmoi
+
+Add to your `.chezmoiexternal.toml`, adjusting the asset name for your platform:
+
+```toml
+[".local/bin/has-nerd-font"]
+    type = "archive-file"
+    url = {{ gitHubLatestReleaseAssetURL "sargunv/has-nerd-font" "has-nerd-font-x86_64-unknown-linux-gnu.tar.gz" | quote }}
+    executable = true
+    path = "has-nerd-font"
+    refreshPeriod = "168h"
+```
+
+Available assets:
+
+- `has-nerd-font-x86_64-unknown-linux-gnu.tar.gz`
+- `has-nerd-font-aarch64-apple-darwin.tar.gz`
+
+### Prebuilt binaries
+
+Download the latest release from
+[GitHub Releases](https://github.com/sargunv/has-nerd-font/releases/latest) and
+extract it somewhere on your `PATH`:
+
+```bash
+# macOS (Apple Silicon)
+curl -fsSL https://github.com/sargunv/has-nerd-font/releases/latest/download/has-nerd-font-aarch64-apple-darwin.tar.gz \
+  | tar xz -C /usr/local/bin
+
+# Linux (x86_64)
+curl -fsSL https://github.com/sargunv/has-nerd-font/releases/latest/download/has-nerd-font-x86_64-unknown-linux-gnu.tar.gz \
+  | tar xz -C /usr/local/bin
+```
+
+### Build from source
+
+With a [Rust toolchain](https://rustup.rs/) installed:
+
+```bash
+cargo install --git https://github.com/sargunv/has-nerd-font.git
+```
 
 ## Flags
 
