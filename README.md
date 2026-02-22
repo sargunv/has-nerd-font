@@ -106,7 +106,7 @@ If the font name looks like a Nerd Font, the answer is yes.
 | VS Code                | Project settings first, falls back to user settings |
 | VSCodium               | Project settings first, falls back to user settings |
 | Zed                    | Project settings first, falls back to user settings |
-| Alacritty              | TODO                                                |
+| Alacritty              | Checks the configured font family                   |
 
 ### Unrecognized terminals
 
