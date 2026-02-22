@@ -20,7 +20,7 @@ fi
 
 TODO
 
-### Flags
+## Flags
 
 ```
 has-nerd-font [OPTIONS]
