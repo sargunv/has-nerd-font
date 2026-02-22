@@ -4,30 +4,30 @@
 
 `has-nerd-font` is a Rust CLI tool that detects whether the current terminal
 session can render Nerd Font glyphs. It inspects environment variables and
-terminal config files to determine font status. No JavaScript/TypeScript — pure
-Rust (edition 2024, toolchain 1.93.0).
+terminal config files to determine font status.
 
 ## Build Commands
 
 ```sh
-cargo build                  # Debug build
-cargo build --release        # Release build (or: mise run build:release)
-cargo run                    # Run the CLI (or: mise run run)
+mise run build               # Debug build
+mise run build:release       # Release build
+mise run run                 # Run the CLI
 ```
 
 ## Test Commands
 
 ```sh
-cargo test                   # Run all tests (or: mise run test)
-cargo test <test_name>       # Run a single test by name
-cargo test --test <file>     # Run all tests in a file (e.g., --test alacritty)
+mise run test                          # Run all tests
+mise run test <name>                   # Run tests matching a name filter
+mise run test --file <file>            # Run all tests in a file (e.g., alacritty)
+mise run test --file <file> <name>     # Combine file and name filter
 ```
 
 Examples of running a single test:
 
 ```sh
-cargo test alacritty_nerd_font_snapshots_json_and_explain
-cargo test --test vscode vscode_nerd_font_terminal_snapshots_json_and_explain
+mise run test alacritty_nerd_font_snapshots_json_and_explain
+mise run test --file vscode vscode_nerd_font_terminal_snapshots_json_and_explain
 ```
 
 ### Snapshot Testing
@@ -35,8 +35,10 @@ cargo test --test vscode vscode_nerd_font_terminal_snapshots_json_and_explain
 Tests use `insta` for snapshot testing. Snapshots live in `tests/snapshots/`.
 
 ```sh
-INSTA_UPDATE=always cargo test   # Accept all snapshot changes (or: mise run test:accept)
+mise run test:accept             # Accept all snapshot changes
 ```
+
+`test:accept` supports the same `--file` and `<name>` arguments as `test`.
 
 When adding or modifying behavior, update snapshots with `mise run test:accept`
 and review the diffs before committing.
@@ -52,15 +54,7 @@ on both `ubuntu-latest` and `macos-latest`.
 ```sh
 mise run check               # Run all linters and formatters (check mode)
 mise run fix                 # Run all linters and formatters (fix mode)
-cargo fmt                    # Format Rust code (rustfmt defaults)
-cargo clippy                 # Lint Rust code (clippy defaults)
-dprint fmt                   # Format non-Rust files (JSON, Markdown, TOML, YAML)
 ```
-
-Linting/formatting is orchestrated by `hk` (configured in `hk.pkl`):
-
-- **Formatters:** `dprint`, `cargo fmt`, `pkl format`
-- **Linters:** `cargo check`, `cargo clippy`, `pkl`
 
 CI runs `mise run fix` and then fails if any files were modified, so always run
 `mise run fix` before committing.
@@ -127,6 +121,6 @@ Install all tools: `mise install`
 ## CI
 
 - **Lint job** (ubuntu): `mise run fix`, then fail if any files changed
-- **Test job** (ubuntu + macos matrix): `cargo test`
+- **Test job** (ubuntu + macos matrix): `mise run test`
 
 Pre-commit hook runs `hk run pre-commit` via mise. Disable with `HK=0`.

@@ -11,17 +11,29 @@ dprint = "0.51.1"
 hk = "1.36.0"
 pkl = "0.30.2"
 
+[tasks.build]
+run = ["cargo build"]
+
 [tasks."build:release"]
 run = ["cargo build --release"]
 
 [tasks.test]
-run = ["cargo test"]
+usage = '''
+arg "[name]" help="Test name filter"
+flag "--file <file>" help="Test file to run (e.g. alacritty, vscode)"
+'''
+run = 'cargo test ${usage_file:+--test "$usage_file"} ${usage_name:-}'
 
 [tasks."test:accept"]
-run = ["INSTA_UPDATE=always cargo test"]
+usage = '''
+arg "[name]" help="Test name filter"
+flag "--file <file>" help="Test file to run (e.g. alacritty, vscode)"
+'''
+run = 'INSTA_UPDATE=always cargo test ${usage_file:+--test "$usage_file"} ${usage_name:-}'
 
 [tasks.run]
-run = ["cargo run"]
+usage = 'arg "[args]" var=#true help="Arguments to pass to the CLI"'
+run = 'cargo run -- ${usage_args:-}'
 
 [tasks.check]
 run = ["hk check --all"]
