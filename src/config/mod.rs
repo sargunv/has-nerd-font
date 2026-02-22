@@ -4,6 +4,7 @@ use serde::de::DeserializeOwned;
 
 use crate::{Confidence, DetectionResult, DetectionSource, Terminal};
 
+mod hyper;
 mod iterm2;
 mod terminal_app;
 mod vscode;
@@ -11,6 +12,7 @@ mod zed;
 
 pub fn resolve(terminal: Terminal, vars: &[(String, String)], cwd: &Path) -> DetectionResult {
     match terminal {
+        Terminal::Hyper => hyper::resolve(vars),
         Terminal::ITerm2 => iterm2::resolve(vars),
         Terminal::TerminalApp => terminal_app::resolve(vars),
         Terminal::Vscode => vscode::resolve(vars, cwd),

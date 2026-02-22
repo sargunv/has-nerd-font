@@ -1,0 +1,9 @@
+{
+  "config": {
+    "fontFamily": "Menlo, \"DejaVu Sans Mono\", Consolas, \"Lucida Console\", monospace",
+    "fontSize": 12
+  },
+  "plugins": [],
+  "localPlugins": [],
+  "keymaps": {}
+}

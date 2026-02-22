@@ -1,0 +1,9 @@
+{
+  "config": {
+    "fontFamily": "\"MesloLGS Nerd Font\", Menlo, monospace",
+    "fontSize": 12
+  },
+  "plugins": [],
+  "localPlugins": [],
+  "keymaps": {}
+}

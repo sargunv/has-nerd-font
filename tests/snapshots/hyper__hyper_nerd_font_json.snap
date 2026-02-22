@@ -1,0 +1,13 @@
+---
+source: tests/hyper.rs
+expression: "support::stdout_json_snapshot(&output)"
+---
+{
+  "confidence": "certain",
+  "config_path": "<SCENARIO_HOME>/hyper-nerd-font/.config/Hyper/hyper.json",
+  "detected": true,
+  "font": "\"MesloLGS Nerd Font\", Menlo, monospace",
+  "profile": null,
+  "source": "terminal_config",
+  "terminal": "hyper"
+}

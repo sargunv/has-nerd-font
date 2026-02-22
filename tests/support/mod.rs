@@ -172,6 +172,21 @@ pub fn install_zed_fixture(home: &Path, fixture_name: &str) {
     std::fs::copy(&fixture_path, &settings_path).expect("failed to copy zed settings fixture");
 }
 
+pub fn install_hyper_fixture(home: &Path, fixture_name: &str) {
+    let fixture_path = Path::new("tests")
+        .join("fixtures")
+        .join("hyper")
+        .join(fixture_name);
+    let config_path = home.join(".config/Hyper/hyper.json");
+    std::fs::create_dir_all(
+        config_path
+            .parent()
+            .expect("hyper config should have parent directory"),
+    )
+    .expect("failed to create hyper config directory");
+    std::fs::copy(&fixture_path, &config_path).expect("failed to copy hyper config fixture");
+}
+
 pub fn install_zed_project_fixture(cwd: &Path, fixture_name: &str) {
     let fixture_path = Path::new("tests")
         .join("fixtures")
