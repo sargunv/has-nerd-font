@@ -70,11 +70,11 @@ pub enum DetectionSource {
 pub enum Terminal {
     /// [Ghostty](https://ghostty.org/) — bundles Nerd Font support.
     Ghostty,
-    /// [WezTerm](https://wezfurlong.org/wezterm/) — bundles Nerd Font support.
+    /// [WezTerm](https://wezterm.org/) — bundles Nerd Font support.
     WezTerm,
     /// [OpenCode](https://opencode.ai/) — bundles Nerd Font support.
     OpenCode,
-    /// [Conductor](https://conductor.sh/) — bundles Nerd Font support.
+    /// Conductor — bundles Nerd Font support.
     Conductor,
     /// [Kitty](https://sw.kovidgoyal.net/kitty/) — bundles Nerd Font support.
     Kitty,
