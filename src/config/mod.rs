@@ -38,6 +38,7 @@ fn no_resolver(terminal: Terminal) -> DetectionResult {
 
 pub(crate) fn var<'a>(vars: &'a [(String, String)], key: &str) -> Option<&'a str> {
     vars.iter()
+        .rev()
         .find_map(|(k, v)| (k == key).then_some(v.as_str()))
 }
 
@@ -127,7 +128,8 @@ pub(crate) fn find_project_settings<T: DeserializeOwned>(
     subdir: &str,
 ) -> Result<(Option<T>, Option<PathBuf>), (String, PathBuf)> {
     let home = home.canonicalize().unwrap_or_else(|_| home.to_path_buf());
-    let mut dir = cwd.starts_with(&home).then_some(cwd);
+    let cwd = cwd.canonicalize().unwrap_or_else(|_| cwd.to_path_buf());
+    let mut dir = cwd.starts_with(&home).then_some(cwd.as_path());
     while let Some(current) = dir {
         let candidate = current.join(subdir).join("settings.json");
         match read_json5_settings::<T>(&candidate) {
