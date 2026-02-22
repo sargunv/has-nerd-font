@@ -1,5 +1,9 @@
 # has-nerd-font
 
+[![crates.io](https://img.shields.io/crates/v/has-nerd-font)](https://crates.io/crates/has-nerd-font)
+[![docs.rs](https://img.shields.io/docsrs/has-nerd-font)](https://docs.rs/has-nerd-font)
+[![license](https://img.shields.io/crates/l/has-nerd-font)](LICENSE)
+
 A CLI tool and Rust library that attempts to detect whether the current terminal
 session can render [Nerd Font](https://www.nerdfonts.com/) glyphs. Useful for
 conditionally enabling icons in shell configs and CLI tools.
