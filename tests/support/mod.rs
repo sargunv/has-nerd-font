@@ -39,13 +39,22 @@ pub fn stdout_json_snapshot_with_extra_normalizations(
     let mut json: Value =
         serde_json::from_slice(&output.stdout).expect("stdout should be valid JSON");
 
-    let scenario_root = snapshot_root().to_string_lossy().to_string();
+    let scenario_root = snapshot_root();
+    let scenario_root_str = scenario_root.to_string_lossy().to_string();
+    let scenario_root_canonical = scenario_root
+        .canonicalize()
+        .map(|p| p.to_string_lossy().to_string());
 
     for key in &["config_path", "error_reason"] {
         if let Some(field) = json.get_mut(*key)
             && let Some(value) = field.as_str()
         {
-            let mut normalized = value.replace(&scenario_root, "<SCENARIO_HOME>");
+            let mut normalized = value.to_string();
+            // Replace canonical form first (e.g. /private/var/... on macOS) before raw form
+            if let Ok(canonical) = &scenario_root_canonical {
+                normalized = normalized.replace(canonical.as_str(), "<SCENARIO_HOME>");
+            }
+            normalized = normalized.replace(&scenario_root_str, "<SCENARIO_HOME>");
             for (from, to) in extra {
                 normalized = normalized.replace(from, to);
             }
@@ -67,8 +76,14 @@ pub fn stderr_text_normalized(output: &Output, extra: &[(&str, &str)]) -> String
     let text = std::str::from_utf8(&output.stderr)
         .expect("stderr should be valid utf-8")
         .to_owned();
-    let scenario_root = snapshot_root().to_string_lossy().to_string();
-    let mut normalized = text.replace(&scenario_root, "<SCENARIO_HOME>");
+    let scenario_root = snapshot_root();
+    let scenario_root_str = scenario_root.to_string_lossy().to_string();
+    let mut normalized = text.to_string();
+    if let Ok(canonical) = scenario_root.canonicalize() {
+        normalized =
+            normalized.replace(&canonical.to_string_lossy().to_string(), "<SCENARIO_HOME>");
+    }
+    normalized = normalized.replace(&scenario_root_str, "<SCENARIO_HOME>");
     for (from, to) in extra {
         normalized = normalized.replace(from, to);
     }
@@ -170,21 +185,6 @@ pub fn install_zed_fixture(home: &Path, fixture_name: &str) {
     )
     .expect("failed to create zed settings directory");
     std::fs::copy(&fixture_path, &settings_path).expect("failed to copy zed settings fixture");
-}
-
-pub fn install_hyper_fixture(home: &Path, fixture_name: &str) {
-    let fixture_path = Path::new("tests")
-        .join("fixtures")
-        .join("hyper")
-        .join(fixture_name);
-    let config_path = home.join(".config/Hyper/hyper.json");
-    std::fs::create_dir_all(
-        config_path
-            .parent()
-            .expect("hyper config should have parent directory"),
-    )
-    .expect("failed to create hyper config directory");
-    std::fs::copy(&fixture_path, &config_path).expect("failed to copy hyper config fixture");
 }
 
 pub fn install_zed_project_fixture(cwd: &Path, fixture_name: &str) {

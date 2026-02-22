@@ -1,5 +1,0 @@
----
-source: tests/hyper.rs
-expression: "support::stderr_text(&output)"
----
-terminal configuration does not indicate a Nerd Font

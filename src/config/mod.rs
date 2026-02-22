@@ -4,7 +4,6 @@ use serde::de::DeserializeOwned;
 
 use crate::{Confidence, DetectionResult, DetectionSource, Terminal};
 
-mod hyper;
 mod iterm2;
 mod terminal_app;
 mod vscode;
@@ -12,7 +11,6 @@ mod zed;
 
 pub fn resolve(terminal: Terminal, vars: &[(String, String)], cwd: &Path) -> DetectionResult {
     match terminal {
-        Terminal::Hyper => hyper::resolve(vars),
         Terminal::ITerm2 => iterm2::resolve(vars),
         Terminal::TerminalApp => terminal_app::resolve(vars),
         Terminal::Vscode => vscode::resolve(vars, cwd),
@@ -99,7 +97,8 @@ pub(crate) fn find_project_settings<T: DeserializeOwned>(
     home: &Path,
     subdir: &str,
 ) -> Result<(Option<T>, Option<PathBuf>), (String, PathBuf)> {
-    let mut dir = Some(cwd);
+    let home = home.canonicalize().unwrap_or_else(|_| home.to_path_buf());
+    let mut dir = cwd.starts_with(&home).then_some(cwd);
     while let Some(current) = dir {
         let candidate = current.join(subdir).join("settings.json");
         match read_json5_settings::<T>(&candidate) {
@@ -107,7 +106,7 @@ pub(crate) fn find_project_settings<T: DeserializeOwned>(
             Ok(None) => {} // not found here, keep walking
             Err(reason) => return Err((reason, candidate)),
         }
-        if current == home {
+        if current == home.as_path() {
             break;
         }
         dir = current.parent();

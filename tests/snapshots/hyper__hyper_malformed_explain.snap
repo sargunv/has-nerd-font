@@ -1,5 +1,0 @@
----
-source: tests/hyper.rs
-expression: "support::stderr_text_normalized(&output, &[])"
----
-failed to read terminal configuration: failed to parse <SCENARIO_HOME>/hyper-malformed/.config/Hyper/hyper.json at line 3 column 20
