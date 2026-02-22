@@ -44,3 +44,9 @@ jobs:
 
       - name: Run tests
         run: cargo test
+
+  all-good:
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    steps:
+      - run: true
