@@ -78,7 +78,7 @@ pub fn stderr_text_normalized(output: &Output, extra: &[(&str, &str)]) -> String
         .to_owned();
     let scenario_root = snapshot_root();
     let scenario_root_str = scenario_root.to_string_lossy().to_string();
-    let mut normalized = text.to_string();
+    let mut normalized = text;
     if let Ok(canonical) = scenario_root.canonicalize() {
         normalized =
             normalized.replace(&canonical.to_string_lossy().to_string(), "<SCENARIO_HOME>");
@@ -156,22 +156,6 @@ pub fn install_vscode_fixture(home: &Path, fixture_name: &str, app_dir: &str) {
     std::fs::copy(&fixture_path, &settings_path).expect("failed to copy vscode settings fixture");
 }
 
-pub fn install_vscode_project_fixture(cwd: &Path, fixture_name: &str) {
-    let fixture_path = Path::new("tests")
-        .join("fixtures")
-        .join("vscode")
-        .join(fixture_name);
-    let settings_path = cwd.join(".vscode/settings.json");
-    std::fs::create_dir_all(
-        settings_path
-            .parent()
-            .expect("vscode project settings should have parent directory"),
-    )
-    .expect("failed to create vscode project settings directory");
-    std::fs::copy(&fixture_path, &settings_path)
-        .expect("failed to copy vscode project settings fixture");
-}
-
 pub fn install_zed_fixture(home: &Path, fixture_name: &str) {
     let fixture_path = Path::new("tests")
         .join("fixtures")
@@ -185,22 +169,6 @@ pub fn install_zed_fixture(home: &Path, fixture_name: &str) {
     )
     .expect("failed to create zed settings directory");
     std::fs::copy(&fixture_path, &settings_path).expect("failed to copy zed settings fixture");
-}
-
-pub fn install_zed_project_fixture(cwd: &Path, fixture_name: &str) {
-    let fixture_path = Path::new("tests")
-        .join("fixtures")
-        .join("zed")
-        .join(fixture_name);
-    let settings_path = cwd.join(".zed/settings.json");
-    std::fs::create_dir_all(
-        settings_path
-            .parent()
-            .expect("zed project settings should have parent directory"),
-    )
-    .expect("failed to create zed project settings directory");
-    std::fs::copy(&fixture_path, &settings_path)
-        .expect("failed to copy zed project settings fixture");
 }
 
 pub fn install_alacritty_fixture(home: &Path, fixture_name: &str) {

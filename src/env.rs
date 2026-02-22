@@ -5,15 +5,10 @@ pub enum EnvDecision {
 }
 
 pub fn detect(vars: &[(String, String)]) -> EnvDecision {
-    let Some(raw) = vars
-        .iter()
-        .rev()
-        .find_map(|(key, value)| (key == "NERD_FONT").then_some(value))
-    else {
-        return EnvDecision::Continue;
-    };
-
-    parse_nerd_font(raw)
+    match crate::var(vars, "NERD_FONT") {
+        Some(raw) => parse_nerd_font(raw),
+        None => EnvDecision::Continue,
+    }
 }
 
 fn parse_nerd_font(raw: &str) -> EnvDecision {

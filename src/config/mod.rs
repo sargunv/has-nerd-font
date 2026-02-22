@@ -2,7 +2,7 @@ use std::path::{Path, PathBuf};
 
 use serde::de::DeserializeOwned;
 
-use crate::{Confidence, DetectionResult, DetectionSource, Terminal};
+use crate::{Confidence, DetectionResult, DetectionSource, Terminal, var};
 
 mod alacritty;
 mod iterm2;
@@ -10,13 +10,13 @@ mod terminal_app;
 mod vscode;
 mod zed;
 
-pub fn resolve(terminal: Terminal, vars: &[(String, String)], cwd: &Path) -> DetectionResult {
+pub fn resolve(terminal: Terminal, vars: &[(String, String)]) -> DetectionResult {
     match terminal {
         Terminal::Alacritty => alacritty::resolve(vars),
         Terminal::ITerm2 => iterm2::resolve(vars),
         Terminal::TerminalApp => terminal_app::resolve(vars),
-        Terminal::Vscode => vscode::resolve(vars, cwd),
-        Terminal::Zed => zed::resolve(vars, cwd),
+        Terminal::Vscode => vscode::resolve(vars),
+        Terminal::Zed => zed::resolve(vars),
         _ => no_resolver(terminal),
     }
 }
@@ -35,12 +35,6 @@ fn no_resolver(terminal: Terminal) -> DetectionResult {
 }
 
 // --- Shared helpers ---
-
-pub(crate) fn var<'a>(vars: &'a [(String, String)], key: &str) -> Option<&'a str> {
-    vars.iter()
-        .rev()
-        .find_map(|(k, v)| (k == key).then_some(v.as_str()))
-}
 
 pub(crate) fn config_error(
     terminal: Terminal,
@@ -115,32 +109,4 @@ pub(crate) fn read_toml_settings<T: DeserializeOwned>(path: &Path) -> Result<Opt
         Ok(settings) => Ok(Some(settings)),
         Err(e) => Err(format!("failed to parse {}: {e}", path.display())),
     }
-}
-
-/// Walk up from `cwd` to `home` (inclusive) looking for `{subdir}/settings.json`.
-/// Returns:
-/// - `Ok((Some(settings), Some(path)))` if found and parsed
-/// - `Ok((None, None))` if not found in any ancestor
-/// - `Err((reason, path))` if found but malformed
-pub(crate) fn find_project_settings<T: DeserializeOwned>(
-    cwd: &Path,
-    home: &Path,
-    subdir: &str,
-) -> Result<(Option<T>, Option<PathBuf>), (String, PathBuf)> {
-    let home = home.canonicalize().unwrap_or_else(|_| home.to_path_buf());
-    let cwd = cwd.canonicalize().unwrap_or_else(|_| cwd.to_path_buf());
-    let mut dir = cwd.starts_with(&home).then_some(cwd.as_path());
-    while let Some(current) = dir {
-        let candidate = current.join(subdir).join("settings.json");
-        match read_json5_settings::<T>(&candidate) {
-            Ok(Some(settings)) => return Ok((Some(settings), Some(candidate))),
-            Ok(None) => {} // not found here, keep walking
-            Err(reason) => return Err((reason, candidate)),
-        }
-        if current == home.as_path() {
-            break;
-        }
-        dir = current.parent();
-    }
-    Ok((None, None))
 }

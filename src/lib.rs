@@ -1,5 +1,3 @@
-use std::path::Path;
-
 mod config;
 mod env;
 mod font;
@@ -10,12 +8,19 @@ mod types;
 
 pub use types::{Confidence, DetectionResult, DetectionSource, Terminal};
 
+/// Look up the last occurrence of `key` in the env var list (last wins).
+fn var<'a>(vars: &'a [(String, String)], key: &str) -> Option<&'a str> {
+    vars.iter()
+        .rev()
+        .find_map(|(k, v)| (k == key).then_some(v.as_str()))
+}
+
 enum LayerOutcome<T> {
     Final(DetectionResult),
     Continue(T),
 }
 
-pub fn detect(vars: &[(String, String)], cwd: &Path) -> DetectionResult {
+pub fn detect(vars: &[(String, String)]) -> DetectionResult {
     if let LayerOutcome::Final(result) = env_layer(vars) {
         return result;
     }
@@ -27,7 +32,7 @@ pub fn detect(vars: &[(String, String)], cwd: &Path) -> DetectionResult {
 
     match ssh_gate_layer(vars, terminal) {
         LayerOutcome::Final(result) => result,
-        LayerOutcome::Continue(terminal) => config::resolve(terminal, vars, cwd),
+        LayerOutcome::Continue(terminal) => config::resolve(terminal, vars),
     }
 }
 

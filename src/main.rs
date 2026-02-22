@@ -13,8 +13,7 @@ struct Cli {
 fn main() {
     let cli = Cli::parse();
     let env_vars: Vec<(String, String)> = std::env::vars().collect();
-    let cwd = std::env::current_dir().expect("failed to get current working directory");
-    let result = detect(&env_vars, &cwd);
+    let result = detect(&env_vars);
 
     if cli.json {
         println!(

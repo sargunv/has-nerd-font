@@ -107,63 +107,6 @@ fn vscode_malformed_snapshots_json_and_explain() {
     );
 }
 
-#[test]
-fn vscode_project_override_snapshots_json_and_explain() {
-    let home = support::scenario_home("vscode-project-override");
-    support::install_vscode_fixture(&home, "vscode-default.jsonc", VSCODE_APP_DIR); // user: non-Nerd
-    let cwd = home.join("projects/my-project");
-    std::fs::create_dir_all(&cwd).expect("failed to create project dir");
-    support::install_vscode_project_fixture(&cwd, "vscode-nerd-font-editor.jsonc"); // project: Nerd
-    let home_str = home.to_string_lossy().to_string();
-
-    let output = support::run_cli(&["--json", "--explain"], &vscode_env(&home_str), Some(&cwd));
-
-    assert_eq!(output.status.code(), Some(0));
-    assert_snapshot!(
-        "vscode_project_override_json",
-        support::stdout_json_snapshot_with_extra_normalizations(
-            &output,
-            APP_SUPPORT_NORMALIZATIONS
-        )
-    );
-    assert_snapshot!(
-        "vscode_project_override_explain",
-        support::stderr_text_normalized(&output, APP_SUPPORT_NORMALIZATIONS)
-    );
-}
-
-#[test]
-fn vscode_project_override_subdirectory_snapshots_json_and_explain() {
-    let home = support::scenario_home("vscode-project-override-subdir");
-    support::install_vscode_fixture(&home, "vscode-default.jsonc", VSCODE_APP_DIR); // user: non-Nerd
-    let project_root = home.join("projects/my-project");
-    std::fs::create_dir_all(&project_root).expect("failed to create project dir");
-    support::install_vscode_project_fixture(&project_root, "vscode-nerd-font-editor.jsonc"); // project: Nerd
-    let subdir = project_root.join("src/deeply/nested");
-    std::fs::create_dir_all(&subdir).expect("failed to create subdirectory");
-    let home_str = home.to_string_lossy().to_string();
-
-    // Run from a subdirectory — should still find .vscode/settings.json at the project root
-    let output = support::run_cli(
-        &["--json", "--explain"],
-        &vscode_env(&home_str),
-        Some(&subdir),
-    );
-
-    assert_eq!(output.status.code(), Some(0));
-    assert_snapshot!(
-        "vscode_project_override_subdirectory_json",
-        support::stdout_json_snapshot_with_extra_normalizations(
-            &output,
-            APP_SUPPORT_NORMALIZATIONS
-        )
-    );
-    assert_snapshot!(
-        "vscode_project_override_subdirectory_explain",
-        support::stderr_text_normalized(&output, APP_SUPPORT_NORMALIZATIONS)
-    );
-}
-
 const VSCODIUM_ASKPASS: &str = "/app/share/codium/codium";
 const VSCODIUM_APP_DIR: &str = "VSCodium";
 
