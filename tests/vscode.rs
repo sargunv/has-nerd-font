@@ -5,6 +5,12 @@ use insta::assert_snapshot;
 const VSCODE_ASKPASS: &str = "/app/share/code/code";
 const VSCODE_APP_DIR: &str = "Code";
 
+const APP_SUPPORT_NORMALIZATIONS: &[(&str, &str)] = if cfg!(target_os = "macos") {
+    &[("Library/Application Support", "<APP_SUPPORT>")]
+} else {
+    &[(".config", "<APP_SUPPORT>")]
+};
+
 fn vscode_env<'a>(home_str: &'a str) -> Vec<(&'a str, &'a str)> {
     vec![
         ("TERM_PROGRAM", "vscode"),
@@ -24,9 +30,15 @@ fn vscode_default_snapshots_json_and_explain() {
     assert_eq!(output.status.code(), Some(6));
     assert_snapshot!(
         "vscode_default_json",
-        support::stdout_json_snapshot(&output)
+        support::stdout_json_snapshot_with_extra_normalizations(
+            &output,
+            APP_SUPPORT_NORMALIZATIONS
+        )
     );
-    assert_snapshot!("vscode_default_explain", support::stderr_text(&output));
+    assert_snapshot!(
+        "vscode_default_explain",
+        support::stderr_text_normalized(&output, APP_SUPPORT_NORMALIZATIONS)
+    );
 }
 
 #[test]
@@ -40,11 +52,14 @@ fn vscode_nerd_font_editor_snapshots_json_and_explain() {
     assert_eq!(output.status.code(), Some(0));
     assert_snapshot!(
         "vscode_nerd_font_editor_json",
-        support::stdout_json_snapshot(&output)
+        support::stdout_json_snapshot_with_extra_normalizations(
+            &output,
+            APP_SUPPORT_NORMALIZATIONS
+        )
     );
     assert_snapshot!(
         "vscode_nerd_font_editor_explain",
-        support::stderr_text(&output)
+        support::stderr_text_normalized(&output, APP_SUPPORT_NORMALIZATIONS)
     );
 }
 
@@ -59,11 +74,14 @@ fn vscode_nerd_font_terminal_snapshots_json_and_explain() {
     assert_eq!(output.status.code(), Some(0));
     assert_snapshot!(
         "vscode_nerd_font_terminal_json",
-        support::stdout_json_snapshot(&output)
+        support::stdout_json_snapshot_with_extra_normalizations(
+            &output,
+            APP_SUPPORT_NORMALIZATIONS
+        )
     );
     assert_snapshot!(
         "vscode_nerd_font_terminal_explain",
-        support::stderr_text(&output)
+        support::stderr_text_normalized(&output, APP_SUPPORT_NORMALIZATIONS)
     );
 }
 
@@ -78,11 +96,14 @@ fn vscode_malformed_snapshots_json_and_explain() {
     assert_eq!(output.status.code(), Some(5));
     assert_snapshot!(
         "vscode_malformed_json",
-        support::stdout_json_snapshot(&output)
+        support::stdout_json_snapshot_with_extra_normalizations(
+            &output,
+            APP_SUPPORT_NORMALIZATIONS
+        )
     );
     assert_snapshot!(
         "vscode_malformed_explain",
-        support::stderr_text_normalized(&output, &[])
+        support::stderr_text_normalized(&output, APP_SUPPORT_NORMALIZATIONS)
     );
 }
 
@@ -100,11 +121,14 @@ fn vscode_project_override_snapshots_json_and_explain() {
     assert_eq!(output.status.code(), Some(0));
     assert_snapshot!(
         "vscode_project_override_json",
-        support::stdout_json_snapshot(&output)
+        support::stdout_json_snapshot_with_extra_normalizations(
+            &output,
+            APP_SUPPORT_NORMALIZATIONS
+        )
     );
     assert_snapshot!(
         "vscode_project_override_explain",
-        support::stderr_text(&output)
+        support::stderr_text_normalized(&output, APP_SUPPORT_NORMALIZATIONS)
     );
 }
 
@@ -129,11 +153,14 @@ fn vscode_project_override_subdirectory_snapshots_json_and_explain() {
     assert_eq!(output.status.code(), Some(0));
     assert_snapshot!(
         "vscode_project_override_subdirectory_json",
-        support::stdout_json_snapshot(&output)
+        support::stdout_json_snapshot_with_extra_normalizations(
+            &output,
+            APP_SUPPORT_NORMALIZATIONS
+        )
     );
     assert_snapshot!(
         "vscode_project_override_subdirectory_explain",
-        support::stderr_text(&output)
+        support::stderr_text_normalized(&output, APP_SUPPORT_NORMALIZATIONS)
     );
 }
 
@@ -159,10 +186,13 @@ fn vscodium_nerd_font_editor_snapshots_json_and_explain() {
     assert_eq!(output.status.code(), Some(0));
     assert_snapshot!(
         "vscodium_nerd_font_editor_json",
-        support::stdout_json_snapshot(&output)
+        support::stdout_json_snapshot_with_extra_normalizations(
+            &output,
+            APP_SUPPORT_NORMALIZATIONS
+        )
     );
     assert_snapshot!(
         "vscodium_nerd_font_editor_explain",
-        support::stderr_text(&output)
+        support::stderr_text_normalized(&output, APP_SUPPORT_NORMALIZATIONS)
     );
 }

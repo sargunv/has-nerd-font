@@ -1,10 +1,10 @@
 ---
 source: tests/vscode.rs
-expression: "support::stdout_json_snapshot(&output)"
+expression: "support::stdout_json_snapshot_with_extra_normalizations(&output,\n    APP_SUPPORT_NORMALIZATIONS)"
 ---
 {
   "confidence": "certain",
-  "config_path": "<SCENARIO_HOME>/vscode-default/Library/Application Support/Code/User/settings.json",
+  "config_path": "<SCENARIO_HOME>/vscode-default/<APP_SUPPORT>/Code/User/settings.json",
   "detected": false,
   "font": "'Monaco', 'Menlo', monospace",
   "profile": null,
