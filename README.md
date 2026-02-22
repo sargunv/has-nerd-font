@@ -75,7 +75,7 @@ cargo install has-nerd-font
 
 ## Flags
 
-```
+```text
 has-nerd-font [OPTIONS]
 
 OPTIONS:
@@ -89,7 +89,7 @@ OPTIONS:
 has-nerd-font --explain
 ```
 
-```
+```text
 terminal ships with Nerd Font support by default
 ```
 
