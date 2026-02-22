@@ -17,10 +17,20 @@ jobs:
     outputs:
       version: ${{ steps.calver.outputs.version }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
       - name: Compute CalVer
         id: calver
         run: |
-          VERSION=$(date -u +"%Y.%m.%d")
+          DATE=$(date -u +"%Y%m%d")
+          PATCH=0
+          while git ls-remote --tags origin "refs/tags/v0.${DATE}.${PATCH}" | grep -q .; do
+            PATCH=$((PATCH + 1))
+          done
+          VERSION="0.${DATE}.${PATCH}"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "Computed version: $VERSION"
 
@@ -42,9 +52,10 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
+      - name: Set version
+        run: cargo set-version "${{ needs.version.outputs.version }}"
+
       - name: Build release binary
-        env:
-          HAS_NERD_FONT_VERSION: ${{ needs.version.outputs.version }}
         run: cargo build --release --target ${{ matrix.target }}
 
       - name: Package artifact
@@ -63,11 +74,15 @@ jobs:
     if: inputs.dry_run == false
     needs: [version, build]
     runs-on: ubuntu-latest
+    environment: crates-io
     steps:
       - name: Checkout
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+
+      - name: Setup
+        uses: ./.github/actions/setup
 
       - name: Create and push tag
         run: |
@@ -87,3 +102,11 @@ jobs:
           name: v${{ needs.version.outputs.version }}
           generate_release_notes: true
           files: artifacts/*
+
+      - name: Set version
+        run: cargo set-version "${{ needs.version.outputs.version }}"
+
+      - name: Publish to crates.io
+        run: cargo publish --allow-dirty
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}

@@ -1,7 +1,13 @@
 [package]
 name = "has-nerd-font"
 version = "0.0.0-dev"
+categories = ["command-line-utilities"]
 edition = "2024"
+keywords = ["nerd-font", "terminal", "cli"]
+license = "Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/sargunv/has-nerd-font"
+description = "Detect whether the current terminal can render Nerd Font glyphs"
 
 [lib]
 name = "has_nerd_font"
