@@ -1,0 +1,3 @@
+# Alacritty config with no font configured
+[window]
+padding = { x = 3, y = 3 }

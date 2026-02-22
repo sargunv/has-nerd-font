@@ -1,0 +1,9 @@
+---
+source: tests/alacritty.rs
+expression: "support::stderr_text(&output)"
+---
+failed to read terminal configuration: failed to parse <SCENARIO_HOME>/alacritty-malformed/.config/alacritty/alacritty.toml: TOML parse error at line 1, column 6
+  |
+1 | this is not valid toml at all [[[
+  |      ^
+key with no value, expected `=`

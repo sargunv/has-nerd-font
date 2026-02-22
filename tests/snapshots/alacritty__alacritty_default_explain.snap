@@ -1,0 +1,5 @@
+---
+source: tests/alacritty.rs
+expression: "support::stderr_text(&output)"
+---
+failed to read terminal configuration: no font configured

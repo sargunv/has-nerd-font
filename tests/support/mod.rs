@@ -202,3 +202,18 @@ pub fn install_zed_project_fixture(cwd: &Path, fixture_name: &str) {
     std::fs::copy(&fixture_path, &settings_path)
         .expect("failed to copy zed project settings fixture");
 }
+
+pub fn install_alacritty_fixture(home: &Path, fixture_name: &str) {
+    let fixture_path = Path::new("tests")
+        .join("fixtures")
+        .join("alacritty")
+        .join(fixture_name);
+    let config_path = home.join(".config/alacritty/alacritty.toml");
+    std::fs::create_dir_all(
+        config_path
+            .parent()
+            .expect("alacritty config should have parent directory"),
+    )
+    .expect("failed to create alacritty config directory");
+    std::fs::copy(&fixture_path, &config_path).expect("failed to copy alacritty config fixture");
+}

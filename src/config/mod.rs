@@ -4,6 +4,7 @@ use serde::de::DeserializeOwned;
 
 use crate::{Confidence, DetectionResult, DetectionSource, Terminal};
 
+mod alacritty;
 mod iterm2;
 mod terminal_app;
 mod vscode;
@@ -11,6 +12,7 @@ mod zed;
 
 pub fn resolve(terminal: Terminal, vars: &[(String, String)], cwd: &Path) -> DetectionResult {
     match terminal {
+        Terminal::Alacritty => alacritty::resolve(vars),
         Terminal::ITerm2 => iterm2::resolve(vars),
         Terminal::TerminalApp => terminal_app::resolve(vars),
         Terminal::Vscode => vscode::resolve(vars, cwd),
@@ -56,16 +58,27 @@ pub(crate) fn config_error(
     }
 }
 
+/// Read a settings file from disk. Returns:
+/// - `Ok(Some(content))` if the file exists and was read successfully
+/// - `Ok(None)` if the file does not exist or is inaccessible
+/// - `Err(reason)` if the file exists but could not be read
+fn read_settings_file(path: &Path) -> Result<Option<String>, String> {
+    match std::fs::read_to_string(path) {
+        Ok(content) => Ok(Some(content)),
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(None),
+        Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied => Ok(None),
+        Err(e) => Err(format!("failed to read {}: {e}", path.display())),
+    }
+}
+
 /// Read and parse a JSON5 settings file. Returns:
 /// - `Ok(Some(settings))` if the file exists and was parsed successfully
 /// - `Ok(None)` if the file does not exist or is inaccessible
 /// - `Err(reason)` if the file exists but is malformed
 pub(crate) fn read_json5_settings<T: DeserializeOwned>(path: &Path) -> Result<Option<T>, String> {
-    let content = match std::fs::read_to_string(path) {
-        Ok(content) => content,
-        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(None),
-        Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied => return Ok(None),
-        Err(e) => return Err(format!("failed to read {}: {e}", path.display())),
+    let content = match read_settings_file(path)? {
+        Some(content) => content,
+        None => return Ok(None),
     };
 
     match serde_json5::from_str::<T>(&content) {
@@ -84,6 +97,22 @@ pub(crate) fn read_json5_settings<T: DeserializeOwned>(path: &Path) -> Result<Op
                 None => Err(format!("failed to parse {}: {e}", path.display())),
             }
         }
+    }
+}
+
+/// Read and parse a TOML settings file. Returns:
+/// - `Ok(Some(settings))` if the file exists and was parsed successfully
+/// - `Ok(None)` if the file does not exist or is inaccessible
+/// - `Err(reason)` if the file exists but is malformed
+pub(crate) fn read_toml_settings<T: DeserializeOwned>(path: &Path) -> Result<Option<T>, String> {
+    let content = match read_settings_file(path)? {
+        Some(content) => content,
+        None => return Ok(None),
+    };
+
+    match toml::from_str::<T>(&content) {
+        Ok(settings) => Ok(Some(settings)),
+        Err(e) => Err(format!("failed to parse {}: {e}", path.display())),
     }
 }
 

@@ -1,0 +1,7 @@
+# Alacritty config with a non-Nerd font
+[font]
+size = 14.0
+
+[font.normal]
+family = "Menlo"
+style = "Regular"

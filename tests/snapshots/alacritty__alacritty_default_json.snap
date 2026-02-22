@@ -1,0 +1,14 @@
+---
+source: tests/alacritty.rs
+expression: "support::stdout_json_snapshot(&output)"
+---
+{
+  "confidence": "certain",
+  "config_path": "<SCENARIO_HOME>/alacritty-default/.config/alacritty/alacritty.toml",
+  "detected": null,
+  "error_reason": "no font configured",
+  "font": null,
+  "profile": null,
+  "source": "config_error",
+  "terminal": "alacritty"
+}

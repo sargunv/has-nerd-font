@@ -1,0 +1,13 @@
+---
+source: tests/alacritty.rs
+expression: "support::stdout_json_snapshot(&output)"
+---
+{
+  "confidence": "certain",
+  "config_path": "<SCENARIO_HOME>/alacritty-non-nerd-font/.config/alacritty/alacritty.toml",
+  "detected": false,
+  "font": "Menlo",
+  "profile": null,
+  "source": "terminal_config",
+  "terminal": "alacritty"
+}

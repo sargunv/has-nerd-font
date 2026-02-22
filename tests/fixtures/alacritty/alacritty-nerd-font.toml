@@ -1,0 +1,7 @@
+# Alacritty config with a Nerd Font
+[font]
+size = 14.0
+
+[font.normal]
+family = "JetBrainsMono Nerd Font"
+style = "Regular"

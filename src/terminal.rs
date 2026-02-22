@@ -7,30 +7,39 @@ pub enum TerminalDecision {
 }
 
 pub fn detect(vars: &[(String, String)]) -> TerminalDecision {
-    if let Some(value) = env_value(vars, "TERM_PROGRAM") {
-        let raw = value.trim();
-
-        if let Some(terminal) = from_term_program(raw) {
-            return decide(terminal);
-        }
-
-        if !raw.is_empty() {
-            return TerminalDecision::Identified(Terminal::Unknown(raw.to_string()));
-        }
+    // Check TERM_PROGRAM for known terminals
+    if let Some(value) = env_value(vars, "TERM_PROGRAM")
+        && let Some(terminal) = from_term_program(value.trim())
+    {
+        return decide(terminal);
     }
 
+    // Check TERM for known terminals
     if let Some(value) = env_value(vars, "TERM")
         && let Some(terminal) = from_term(value)
     {
         return decide(terminal);
     }
 
+    // Check terminal-specific env vars
     if env_value(vars, "OPENCODE_TERMINAL") == Some("1") {
         return decide(Terminal::OpenCode);
     }
 
-    if env_value(vars, "CONDUCTOR_WORKSPACE_NAME").is_some() {
+    if env_value(vars, "CONDUCTOR_WORKSPACE_NAME").is_some_and(|v| !v.is_empty()) {
         return decide(Terminal::Conductor);
+    }
+
+    if env_value(vars, "ALACRITTY_LOG").is_some_and(|v| !v.is_empty()) {
+        return decide(Terminal::Alacritty);
+    }
+
+    // Fall back to Unknown if TERM_PROGRAM was set but unrecognized
+    if let Some(value) = env_value(vars, "TERM_PROGRAM") {
+        let raw = value.trim();
+        if !raw.is_empty() {
+            return TerminalDecision::Identified(Terminal::Unknown(raw.to_string()));
+        }
     }
 
     TerminalDecision::Unknown

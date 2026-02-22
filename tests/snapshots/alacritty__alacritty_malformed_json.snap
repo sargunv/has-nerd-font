@@ -1,0 +1,14 @@
+---
+source: tests/alacritty.rs
+expression: "support::stdout_json_snapshot(&output)"
+---
+{
+  "confidence": "certain",
+  "config_path": "<SCENARIO_HOME>/alacritty-malformed/.config/alacritty/alacritty.toml",
+  "detected": null,
+  "error_reason": "failed to parse <SCENARIO_HOME>/alacritty-malformed/.config/alacritty/alacritty.toml: TOML parse error at line 1, column 6\n  |\n1 | this is not valid toml at all [[[\n  |      ^\nkey with no value, expected `=`\n",
+  "font": null,
+  "profile": null,
+  "source": "config_error",
+  "terminal": "alacritty"
+}
