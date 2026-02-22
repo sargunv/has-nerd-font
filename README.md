@@ -58,6 +58,13 @@ has-nerd-font --json | jq .
 }
 ```
 
+Since they write to different output streams, `--explain` and `--json` can be
+used together.
+
+```bash
+has-nerd-font --explain --json | jq .
+```
+
 ## Exit codes
 
 Exit codes follow a detection cascade — lower numbers mean the tool stopped
@@ -105,3 +112,5 @@ If the font name looks like a Nerd Font, the answer is yes.
 
 If the terminal can't be identified at all, the answer is no. Set `NERD_FONT=1`
 to override.
+
+Feel free to submit a PR to improve detection for your favorite terminal.
