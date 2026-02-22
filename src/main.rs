@@ -2,6 +2,7 @@ use clap::Parser;
 use has_nerd_font::detect;
 
 #[derive(Debug, Parser)]
+#[command(version)]
 struct Cli {
     #[arg(long)]
     json: bool,
