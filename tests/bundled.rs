@@ -56,6 +56,41 @@ fn kitty_bundled_terminal_via_term_snapshots_json_and_explain() {
 }
 
 #[test]
+fn superset_bundled_terminal_snapshots_json_and_explain() {
+    let output = support::run_cli(
+        &["--json", "--explain"],
+        &[("TERM_PROGRAM", "Superset")],
+        None,
+    );
+
+    assert_eq!(output.status.code(), Some(0));
+    assert_snapshot!(
+        "bundled_superset_json",
+        support::stdout_json_snapshot(&output)
+    );
+    assert_snapshot!("bundled_superset_explain", support::stderr_text(&output));
+}
+
+#[test]
+fn superset_bundled_terminal_via_env_snapshots_json_and_explain() {
+    let output = support::run_cli(
+        &["--json", "--explain"],
+        &[("SUPERSET_PANE_ID", "pane-1772261027171-p1p7lqjoe")],
+        None,
+    );
+
+    assert_eq!(output.status.code(), Some(0));
+    assert_snapshot!(
+        "bundled_superset_env_json",
+        support::stdout_json_snapshot(&output)
+    );
+    assert_snapshot!(
+        "bundled_superset_env_explain",
+        support::stderr_text(&output)
+    );
+}
+
+#[test]
 fn conductor_bundled_terminal_snapshots_json_and_explain() {
     let output = support::run_cli(
         &["--json", "--explain"],
