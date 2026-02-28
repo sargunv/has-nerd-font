@@ -39,6 +39,7 @@ pub enum Terminal {
     OpenCode,
     Conductor,
     Kitty,
+    Superset,
     Alacritty,
     ITerm2,
     TerminalApp,
@@ -52,7 +53,12 @@ impl Terminal {
     pub fn is_bundled(&self) -> bool {
         matches!(
             self,
-            Self::Ghostty | Self::WezTerm | Self::Kitty | Self::OpenCode | Self::Conductor
+            Self::Ghostty
+                | Self::WezTerm
+                | Self::Kitty
+                | Self::Superset
+                | Self::OpenCode
+                | Self::Conductor
         )
     }
 }
