@@ -83,7 +83,7 @@ cargo install has-nerd-font
 
 ## Flags
 
-```
+```text
 has-nerd-font [OPTIONS]
 
 OPTIONS:
@@ -97,7 +97,7 @@ OPTIONS:
 has-nerd-font --explain
 ```
 
-```
+```text
 terminal ships with Nerd Font support by default
 ```
 
@@ -147,13 +147,12 @@ earlier, higher numbers mean it got further through the detection layers.
 
 These terminals ship with built-in Nerd Font support. Detection is immediate.
 
-| Terminal  |
-| --------- |
-| Ghostty   |
-| WezTerm   |
-| Kitty     |
-| OpenCode  |
-| Conductor |
+- [Ghostty](https://ghostty.org/)
+- [WezTerm](https://wezterm.org/)
+- [Kitty](https://sw.kovidgoyal.net/kitty/)
+- [Superset](https://superset.sh/)
+- [OpenCode](https://opencode.ai/)
+- Conductor
 
 ### Config file detection
 

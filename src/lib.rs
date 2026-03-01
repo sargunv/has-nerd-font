@@ -1,3 +1,6 @@
+#![doc = include_str!("../README.md")]
+#![deny(missing_docs)]
+
 mod config;
 mod env;
 mod font;
@@ -20,6 +23,24 @@ enum LayerOutcome<T> {
     Continue(T),
 }
 
+/// Detect whether the current terminal session can render Nerd Font glyphs.
+///
+/// Pass the current environment variables as a slice of `(key, value)` pairs.
+/// The function inspects environment variables and terminal config files to
+/// determine font status.
+///
+/// # Example
+///
+/// ```
+/// let env_vars: Vec<(String, String)> = std::env::vars().collect();
+/// let result = has_nerd_font::detect(&env_vars);
+///
+/// match result.detected {
+///     Some(true) => println!("Nerd Font available"),
+///     Some(false) => println!("No Nerd Font detected"),
+///     None => println!("Could not determine font status"),
+/// }
+/// ```
 pub fn detect(vars: &[(String, String)]) -> DetectionResult {
     if let LayerOutcome::Final(result) = env_layer(vars) {
         return result;
