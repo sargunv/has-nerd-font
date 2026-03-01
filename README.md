@@ -22,7 +22,9 @@ fi
 
 ## CLI Installation
 
-### mise
+### [mise](https://mise.jdx.dev)
+
+Install it:
 
 ```bash
 # prebuilt binary from GitHub Releases
@@ -32,7 +34,13 @@ mise use -g "github:sargunv/has-nerd-font"
 mise use -g "cargo:has-nerd-font"
 ```
 
-### chezmoi
+Or just execute it; `mise` will download the binary on first use:
+
+```bash
+mise x 'github:sargunv/has-nerd-font@latest' x -- has-nerd-font
+```
+
+### [chezmoi](https://www.chezmoi.io)
 
 Add to your `.chezmoiexternal.toml`, adjusting the asset name for your platform:
 
@@ -139,13 +147,12 @@ earlier, higher numbers mean it got further through the detection layers.
 
 These terminals ship with built-in Nerd Font support. Detection is immediate.
 
-| Terminal  |
-| --------- |
-| Ghostty   |
-| WezTerm   |
-| Kitty     |
-| OpenCode  |
-| Conductor |
+- [Ghostty](https://ghostty.org/)
+- [WezTerm](https://wezterm.org/)
+- [Kitty](https://sw.kovidgoyal.net/kitty/)
+- [Superset](https://superset.sh/)
+- [OpenCode](https://opencode.ai/)
+- Conductor
 
 ### Config file detection
 

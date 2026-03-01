@@ -78,6 +78,8 @@ pub enum Terminal {
     Conductor,
     /// [Kitty](https://sw.kovidgoyal.net/kitty/) — bundles Nerd Font support.
     Kitty,
+    /// [Superset](https://superset.sh/) — bundles Nerd Font support.
+    Superset,
     /// [Alacritty](https://alacritty.org/) — detected via config file.
     Alacritty,
     /// [iTerm2](https://iterm2.com/) (macOS) — detected via config file.
@@ -99,7 +101,12 @@ impl Terminal {
     pub fn is_bundled(&self) -> bool {
         matches!(
             self,
-            Self::Ghostty | Self::WezTerm | Self::Kitty | Self::OpenCode | Self::Conductor
+            Self::Ghostty
+                | Self::WezTerm
+                | Self::Kitty
+                | Self::Superset
+                | Self::OpenCode
+                | Self::Conductor
         )
     }
 }

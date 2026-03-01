@@ -1,0 +1,5 @@
+---
+source: tests/bundled.rs
+expression: "support::stderr_text(&output)"
+---
+terminal ships with Nerd Font support by default

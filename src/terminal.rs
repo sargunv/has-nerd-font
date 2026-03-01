@@ -28,6 +28,10 @@ pub fn detect(vars: &[(String, String)]) -> TerminalDecision {
         return decide(Terminal::OpenCode);
     }
 
+    if var("SUPERSET_PANE_ID").is_some_and(|v| !v.is_empty()) {
+        return decide(Terminal::Superset);
+    }
+
     if var("CONDUCTOR_WORKSPACE_NAME").is_some_and(|v| !v.is_empty()) {
         return decide(Terminal::Conductor);
     }
@@ -61,6 +65,7 @@ fn from_term_program(value: &str) -> Option<Terminal> {
         "ghostty" => Some(Terminal::Ghostty),
         "wezterm" => Some(Terminal::WezTerm),
         "kitty" => Some(Terminal::Kitty),
+        "superset" => Some(Terminal::Superset),
         "iterm.app" => Some(Terminal::ITerm2),
         "apple_terminal" => Some(Terminal::TerminalApp),
         "vscode" => Some(Terminal::Vscode),
